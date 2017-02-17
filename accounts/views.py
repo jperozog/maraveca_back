@@ -18,7 +18,7 @@ obtain_auth_token = ObtainAuthToken.as_view(
 
 
 class SignUpViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-                    viewsets.GenericViewet):
+                    viewsets.GenericViewSet):
     queryset = accounts_models.User.objects.all()
     serializer_class = accounts_serializers.SignupSerializer
     filter_backends = (filters.DjangoFilterBackend,)
