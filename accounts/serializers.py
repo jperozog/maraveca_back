@@ -82,7 +82,7 @@ class ClientSerializer(UserSerializer):
     class Meta:
         model = accounts_models.User
         fields = ('id', 'phone', 'phone2', 'address', 'equipment', 'service',
-                  'first_name', 'series', 'series_display', 'comments',
+                  'first_name', 'last_name','series', 'series_display', 'comments',
                   'email', 'date_joined', 'ci', 'birthdate',)
 
         extra_kwargs = {
