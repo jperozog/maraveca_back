@@ -2,4 +2,5 @@
 *.sqlite3
 media/
 media/*
+*.env
 
