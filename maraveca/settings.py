@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 # Build paths inside the project like this: os.path.join(BASE_DIR,...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +29,13 @@ SECRET_KEY = '77ka$fm^p4+c!j2bkw-b77@tsd_a%o&^16ptk*00l7yx1t*p3#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-API = '127.0.0.1:8000'
+if env('DEBUG') == 'True':
+    DEBUG = True
+elif env('DEBUG') == 'False':
+    DEBUG = False
+
+API = env('API')
+
 ALLOWED_HOSTS = ["*"]
 
 
@@ -89,8 +99,12 @@ WSGI_APPLICATION = 'maraveca.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.'+env('DB_BACKEND'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'HOST': env('DB_HOST'),
+        'PASSWORD': env('DB_PASSWORD')
     }
 }
 
