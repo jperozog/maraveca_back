@@ -83,31 +83,34 @@ class ClientSerializer(UserSerializer):
         model = accounts_models.User
         fields = ('id', 'phone', 'phone2', 'address', 'equipment', 'service',
                   'first_name', 'last_name','series', 'series_display', 'comments',
-                  'email', 'date_joined', 'ci', 'birthdate',)
+                  'email', 'date_joined', 'type_dni', 'dni', 'birthdate',)
 
         extra_kwargs = {
             'id': {'read_only': True},
             'email': {'required': True},
-            'ci': {'required': True}
+            'dni': {'required': True},
+            'type_dni': {'required': True}
         }
 
     def create(self, validated_data):
-        ci = validated_data.get('ci')
-        user = accounts_models.User.objects.filter(ci=ci)
+        dni = validated_data.get('dni')
+        type_dni = validated_data.get('type_dni')
+        user = accounts_models.User.objects.filter(dni=dni, type_dni=type_dni)
         if user.exists():
             msg = 'el cliente ya fue registrado'
-            raise serializers.ValidationError({'ci': msg})
+            raise serializers.ValidationError({'dni': msg})
         validated_data['username'] = validated_data.get('email')
         validated_data['type_user'] = accounts_models.CLIENTE_REGISTRADO
         instance = super(UserSerializer, self).create(validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        ci = validated_data.get('ci')
-        user = accounts_models.User.objects.filter(ci=ci)
+        dni = validated_data.get('dni')
+        type_dni = validated_data.get('type_dni')
+        user = accounts_models.User.objects.filter(dni=dni, type_dni=type_dni)
         if user.exists() and user[0] != instance:
             msg = 'el cliente ya fue registrado'
-            raise serializers.ValidationError({'ci': msg})
+            raise serializers.ValidationError({'dni': msg})
         validated_data['username'] = validated_data.get('email')
         validated_data['type_user'] = accounts_models.CLIENTE_REGISTRADO
         instance = super(UserSerializer, self).update(instance, validated_data)
