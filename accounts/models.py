@@ -22,6 +22,12 @@ SERIES = (
     (SIN_IMPUESTO, 'Sin impuesto'),
 )
 
+TYPE_DNI = (
+    ('E', 'Extranjero'),
+    ('V', 'Venezolano'),
+    ('J', 'RIF')
+)
+
 
 class User(AbstractUser):
 
@@ -31,7 +37,8 @@ class User(AbstractUser):
     equipment = models.CharField(max_length=140, blank=True, null=True)
     type_user = models.CharField(max_length=2, choices=TYPE_USER,
                                  default=CLIENTE_POTENCIAL)
-    ci = models.IntegerField(null=True)
+    type_dni = models.CharField(max_length=1, choices=TYPE_DNI)
+    dni = models.IntegerField(null=True)
     service = models.CharField(max_length=140, blank=True, null=True)
     birthdate = models.DateTimeField(blank=True, null=True)
     series = models.IntegerField(choices=SERIES, blank=True, null=True)
