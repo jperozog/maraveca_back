@@ -17,15 +17,21 @@ TYPE_USER = (
 )
 
 SIN_IMPUESTO = 1
+CON_IMPUESTO = 2
 
 SERIES = (
     (SIN_IMPUESTO, 'Sin impuesto'),
+    (CON_IMPUESTO, 'Con impuesto'),
 )
 
+Extranjero = 'E'
+Venezolano = 'V'
+RIF = 'J'
+
 TYPE_DNI = (
-    ('E', 'Extranjero'),
-    ('V', 'Venezolano'),
-    ('J', 'RIF')
+    (Extranjero, 'Extranjero'),
+    (Venezolano, 'Venezolano'),
+    (RIF, 'RIF')
 )
 
 
