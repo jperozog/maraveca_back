@@ -25,6 +25,8 @@ router.register('client', accounts_views.ClientViewSet)
 router.register('potential', accounts_views.PotentialClientViewSet)
 router.register('signup', accounts_views.SignUpViewSet)
 router.register('service', services_views.ServiceViewSet)
+router.register('plan', services_views.PlanViewSet)
+router.register('additional', services_views.AdditionalViewSet)
 
 
 urlpatterns = [
@@ -33,3 +35,11 @@ urlpatterns = [
     url(r'^login/', accounts_views.obtain_auth_token, name='login'),
     url(r'^', include(router.urls))
 ]
+from django.conf import settings
+from django.views.static import serve
+
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, }),
+    ]
+

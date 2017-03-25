@@ -8,7 +8,18 @@ class AdditionalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = services_models.Additional
-        fields = '__al__'
+        fields = '__all__'
+
+
+class PlanSerializer(serializers.ModelSerializer):
+    monthly_type_plan_display = serializers.SerializerMethodField()
+
+    def get_monthly_type_plan_display(self, obj):
+        return obj.get_monthly_type_plan_display()
+
+    class Meta:
+        model = services_models.Plan
+        fields = '__all__'
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -20,7 +31,8 @@ class ServiceSerializer(serializers.ModelSerializer):
     payment_method = serializers.SerializerMethodField()
     plan_id = serializers.IntegerField()
     client_id = serializers.IntegerField()
-    additional = AdditionalSerializer(many=True, required=False)
+    additional = AdditionalSerializer(many=True, required=False, read_only=True)
+    additional_id = serializers.ListField(child=serializers.CharField(), write_only=True)
 
     def notificatios_method(self, obj):
         return obj.get_notificatios_method_display()

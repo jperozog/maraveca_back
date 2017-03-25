@@ -20,7 +20,7 @@ INSTALL_TYPE = (
 DEFINIDA_EN_PLANES = "dp"
 
 MONTHLY_TYPE = (
-    (DEFINIDA_EN_PLANES, "in"),
+    (DEFINIDA_EN_PLANES, "Definida en planes"),
 )
 
 MODULO_SM = "sm"
