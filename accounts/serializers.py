@@ -29,6 +29,7 @@ class UserSerializer(CustomSerializer):
         extra_kwargs = {
             'type_user': {'required': False},
             'id': {'read_only': True},
+            'password': {'write_only': True},
             'email': {'required': True}
         }
 

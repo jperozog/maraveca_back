@@ -17,12 +17,14 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from accounts import views as accounts_views
+from services import views as services_views
 
 router = routers.DefaultRouter()
 
 router.register('client', accounts_views.ClientViewSet)
 router.register('potential', accounts_views.PotentialClientViewSet)
 router.register('signup', accounts_views.SignUpViewSet)
+router.register('service', services_views.ServiceViewSet)
 
 
 urlpatterns = [
