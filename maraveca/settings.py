@@ -49,11 +49,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'services',
     'rest_framework',
     'rest_framework_docs',
     'rest_framework.authtoken',
     'django_filters',
     'corsheaders',
+
 ]
 REST_FRAMEWORK_DOCS = {
     'HIDE_DOCS': False  # Default: False

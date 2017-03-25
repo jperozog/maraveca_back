@@ -1,5 +1,0 @@
-200.209.74.16 - - [21/Feb/2017:22:53:54 -0430] "GET / HTTP/1.1" 499 0 "-" "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/53.0.2785.143 Chrome/53.0.2785.143 Safari/537.36"
-200.209.74.16 - - [21/Feb/2017:23:00:02 -0430] "GET / HTTP/1.1" 499 0 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36 Google Favicon"
-200.209.74.16 - - [21/Feb/2017:23:03:56 -0430] "GET / HTTP/1.1" 504 593 "-" "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/53.0.2785.143 Chrome/53.0.2785.143 Safari/537.36"
-200.209.74.16 - - [21/Feb/2017:23:05:55 -0430] "GET /favicon.ico HTTP/1.1" 502 583 "http://186.167.32.27:8081/" "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/53.0.2785.143 Chrome/53.0.2785.143 Safari/537.36"
-200.209.74.16 - - [21/Feb/2017:23:06:41 -0430] "GET /favicon.ico HTTP/1.1" 502 583 "http://186.167.32.27:8081/" "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/53.0.2785.143 Chrome/53.0.2785.143 Safari/537.36"
