@@ -50,6 +50,7 @@ class ServicesTest(APITestCase):
             "client": create_client()
         }
         service = Service.objects.create(**data)
-        for field in list(set(data.keys()) - set(['client'])):
+        for field in list(set(data.keys()) - set(['client', 'plan'])):
             self.assertEqual(data[field], service.serializable_value(field))
         self.assertEqual(data['client'].id, service.client.id)
+        self.assertEqual(data['plan'].id, service.plan.id)
