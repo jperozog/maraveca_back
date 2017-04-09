@@ -32,7 +32,7 @@ CUT_METHOD = (
 OTHER = "ot"
 
 PAYMENT_METHOD = (
-    (OTHER, "ot"),
+    (OTHER, "otro"),
 )
 
 
