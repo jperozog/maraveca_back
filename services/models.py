@@ -5,10 +5,12 @@ from django.db import models
 
 # Create your models here.
 
-SMS_EMAIL = "me"
+EMAIL = "em"
+SMS = "sm"
 
 NOTIFICATIONS_METHOD = (
-    (SMS_EMAIL, "SMS y Email"),
+    (SMS, "SMS"),
+    (EMAIL, "Email"),
 )
 
 INALAMBRICA = "in"
@@ -30,9 +32,16 @@ CUT_METHOD = (
 )
 
 OTHER = "ot"
+TRANSFERENCIA = "tr"
+DEPOSITO = "de"
+CHEQUE = "ch"
 
 PAYMENT_METHOD = (
     (OTHER, "otro"),
+    (TRANSFERENCIA, "Transferencia"),
+    (DEPOSITO, "Deposito"),
+    (CHEQUE, "Cheque"),
+
 )
 
 
@@ -46,7 +55,7 @@ class Plan(models.Model):
 
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    monthly_type_plan = models.CharField(max_length=2, choices=MONTHLY_TYPE)
+    monthly_type_plan = models.CharField(max_length=2, choices=MONTHLY_TYPE, default=DEFINIDA_EN_PLANES)
 
     def __unicode__(self):
         return self.name
@@ -81,21 +90,22 @@ class Service(models.Model):
     """
 
     plan = models.ForeignKey('Plan')
-    additional = models.ManyToManyField('Additional')
+    additional = models.ManyToManyField('Additional', blank=True, null=True)
     notificatios_method = models.CharField(max_length=2,
-                                           choices=NOTIFICATIONS_METHOD)
-    install_date = models.DateTimeField()
-    install_type = models.CharField(max_length=2, choices=INSTALL_TYPE)
-    monthly_type = models.CharField(max_length=2, choices=MONTHLY_TYPE)
-    invoice_date = models.DateTimeField()
-    credit_days = models.IntegerField()
-    cut_method = models.CharField(max_length=2, choices=CUT_METHOD)
-    install_price = models.DecimalField(max_digits=10, decimal_places=2)
-    start_date = models.DateTimeField()
-    monthly_cuote = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.CharField(max_length=2, choices=PAYMENT_METHOD)
+                                           choices=NOTIFICATIONS_METHOD,
+                                           default=EMAIL)
+    install_date = models.DateTimeField(blank=True, null=True)
+    install_type = models.CharField(max_length=2, choices=INSTALL_TYPE, blank=True, null=True)
+    monthly_type = models.CharField(max_length=2, choices=MONTHLY_TYPE, blank=True, null=True)
+    invoice_date = models.DateTimeField(blank=True, null=True)
+    credit_days = models.IntegerField(blank=True, null=True)
+    cut_method = models.CharField(max_length=2, choices=CUT_METHOD, blank=True, null=True)
+    install_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True)
+    monthly_cuote = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    payment_method = models.CharField(max_length=2, choices=PAYMENT_METHOD, blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
-    cut_days = models.IntegerField()
+    cut_days = models.IntegerField(blank=True, null=True)
     client = models.ForeignKey('accounts.User', related_name='services')
 
     def __unicode__(self):

@@ -32,7 +32,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     plan_id = serializers.IntegerField()
     client_id = serializers.IntegerField()
     additional = AdditionalSerializer(many=True, required=False, read_only=True)
-    additional_id = serializers.ListField(child=serializers.CharField(), write_only=True)
+    additional_id = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
 
     def notificatios_method(self, obj):
         return obj.get_notificatios_method_display()
