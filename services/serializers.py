@@ -77,11 +77,11 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         client_id = validated_data.get('client_id')
-        client = accounts_models.Client.objects.get(id=client_id)
+        client = accounts_models.User.objects.get(id=client_id)
         validated_data['client'] = client
 
         plan_id = validated_data.get('plan_id')
-        plan = accounts_models.plan.objects.get(id=plan_id)
+        plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
 
         instance = super(ServiceSerializer, self).create(validated_data)
@@ -89,11 +89,11 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         client_id = validated_data.get('client_id')
-        client = accounts_models.Client.objects.get(id=client_id)
+        client = accounts_models.User.objects.get(id=client_id)
         validated_data['client'] = client
 
         plan_id = validated_data.get('plan_id')
-        plan = accounts_models.plan.objects.get(id=plan_id)
+        plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
 
         instance = super(ServiceSerializer, self).update(instance,
