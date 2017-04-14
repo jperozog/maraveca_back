@@ -30,6 +30,20 @@ class TestViews(TestCase, utils.Utils):
             'comments': get_random_string(length=140),
             'cut_days': 25,
             'client': self.create_client(),
+
+            "address": "av 54 con calle 84 san Rafael",
+            "phoneSMS": "04141234567",
+            "phones": "04241234567 042698765432",
+            "server": "01",
+            "type_ip": "DI",
+            "celdaAP": "01",
+            "equipment": "equipo",
+            "email_alt": "email@mail.com",
+            "so": "01",
+            "ip": "196.168.0.1",
+            "mac": "255.255.255.255",
+            "serial":"ABC123",
+            "comments": "comentarios"
         }
         
 

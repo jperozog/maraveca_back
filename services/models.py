@@ -7,10 +7,12 @@ from django.db import models
 
 EMAIL = "em"
 SMS = "sm"
+SMS_EMAIL = "se"
 
 NOTIFICATIONS_METHOD = (
     (SMS, "SMS"),
     (EMAIL, "Email"),
+    (SMS_EMAIL, "Email y SMS"),
 )
 
 INALAMBRICA = "in"
@@ -44,6 +46,29 @@ PAYMENT_METHOD = (
 
 )
 
+SERVER = (
+    ("01", "Server 1"),
+    ("02", "Server 2"),
+)
+
+SO = (
+    ("01", "S.O 1"),
+    ("02", "S.O 2"),
+)
+
+
+CELDA_AP = (
+    ("01", "Celda 1"),
+    ("02", "Celda 2"),
+)
+
+ESTATICA = "ES"
+DINAMICA = "DI"
+
+TYPE_IP = (
+    (ESTATICA, "Estatica"),
+    (DINAMICA, "Dinamica"),
+)
 
 class Plan(models.Model):
     """Planes de internet.
@@ -107,6 +132,21 @@ class Service(models.Model):
     comments = models.TextField(blank=True, null=True)
     cut_days = models.IntegerField(blank=True, null=True)
     client = models.ForeignKey('accounts.User', related_name='services')
+
+
+    address = models.TextField(blank=True, null=True)
+    phoneSMS = models.CharField(max_length=20, blank=True, null=True)
+    phones = models.CharField(max_length=20, blank=True, null=True)
+    server = models.CharField(max_length=2, choices=SERVER, blank=True, null=True)
+    type_ip = models.CharField(max_length=2, choices=TYPE_IP, default=DINAMICA)
+    celdaAP = models.CharField(max_length=2, choices=CELDA_AP, blank=True, null=True)
+    equipment = models.CharField(max_length=20, blank=True, null=True)
+    email_alt = models.EmailField(blank=True, null=True)
+    so = models.CharField(max_length=2, choices=SO, blank=True, null=True)
+    ip = models.CharField(max_length=2, blank=True, null=True)
+    mac = models.CharField(max_length=2, blank=True, null=True)
+    serial = models.CharField(max_length=2, blank=True, null=True)
+    comments = models.CharField(max_length=2, blank=True, null=True)
 
     def __unicode__(self):
         return self.plan.name

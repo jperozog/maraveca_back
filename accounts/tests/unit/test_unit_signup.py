@@ -1,9 +1,10 @@
+"""
 from rest_framework.test import APITestCase,APIRequestFactory
 from rest_framework import status
 from django.core.urlresolvers import reverse
 from rest_framework import status
 from ..resources import correct_user
-from accounts.views import SignupView
+from accounts.views import SignupViewSet
 
 # Create your tests here.
 class Regiser(APITestCase):
@@ -24,7 +25,7 @@ class Regiser(APITestCase):
 
         request = factory.post(reverse('signup'),user)
         request.data=user
-        response = SignupView.as_view()(request).render()
+        response = SignupViewSet.as_view()(request).render()
         self.assertEqual(response.status_code,status.HTTP_200_OK) 
         assert not 'password' in response.data.keys()
 
@@ -41,3 +42,4 @@ class Regiser(APITestCase):
         self.assertEqual(response.data,user)
 
 
+"""

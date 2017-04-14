@@ -33,6 +33,18 @@ class ServiceSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField()
     additional = AdditionalSerializer(many=True, required=False, read_only=True)
     additional_id = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
+    server = serializers.SerializerMethodField()
+    type_ip = serializers.SerializerMethodField()
+    celdaAP = serializers.SerializerMethodField()
+
+    def get_server_display(self, obj):
+        return obj.get_server_display()
+
+    def get_type_ip_display(self, obj):
+        return obj.get_type_ip_display()
+
+    def get_celdaAP_display(self, obj):
+        return obj.get_celdaAP_display()
 
     def notificatios_method(self, obj):
         return obj.get_notificatios_method_display()

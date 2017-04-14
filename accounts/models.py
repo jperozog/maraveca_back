@@ -27,11 +27,13 @@ SERIES = (
 Extranjero = 'E'
 Venezolano = 'V'
 RIF = 'J'
+GUBERNAMENTAL = 'G'
 
 TYPE_DNI = (
     (Extranjero, 'Extranjero'),
     (Venezolano, 'Venezolano'),
-    (RIF, 'RIF')
+    (RIF, 'RIF'),
+    (GUBERNAMENTAL, 'Gubernamental'),
 )
 
 
