@@ -33,9 +33,9 @@ class ServiceSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField()
     additional = AdditionalSerializer(many=True, required=False, read_only=True)
     additional_id = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
-    server = serializers.SerializerMethodField()
-    type_ip = serializers.SerializerMethodField()
-    celdaAP = serializers.SerializerMethodField()
+    server_display = serializers.SerializerMethodField()
+    type_ip_display = serializers.SerializerMethodField()
+    celdaAP_display = serializers.SerializerMethodField()
 
     def get_server_display(self, obj):
         return obj.get_server_display()
@@ -73,7 +73,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         client = accounts_models.User.objects.filter(id=client_id,
                                                      type_user=CLIENTE)
         if not client.exists():
-            msg = 'el plan seleccionado no existe'
+            msg = 'el cliente seleccionado no existe'
             raise serializers.ValidationError(msg)
         return client_id
 
@@ -88,11 +88,10 @@ class ServiceSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data):
-        client_id = validated_data.get('client_id')
+        client_id = validated_data.pop('client_id')
         client = accounts_models.User.objects.get(id=client_id)
         validated_data['client'] = client
-
-        plan_id = validated_data.get('plan_id')
+        plan_id = validated_data.pop('plan_id')
         plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
 

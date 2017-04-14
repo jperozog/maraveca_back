@@ -18,7 +18,7 @@ NOTIFICATIONS_METHOD = (
 INALAMBRICA = "in"
 
 INSTALL_TYPE = (
-    (INALAMBRICA, "in"),
+    (INALAMBRICA, "Inalambrica"),
 )
 
 DEFINIDA_EN_PLANES = "dp"
@@ -142,11 +142,11 @@ class Service(models.Model):
     celdaAP = models.CharField(max_length=2, choices=CELDA_AP, blank=True, null=True)
     equipment = models.CharField(max_length=20, blank=True, null=True)
     email_alt = models.EmailField(blank=True, null=True)
-    so = models.CharField(max_length=2, choices=SO, blank=True, null=True)
-    ip = models.CharField(max_length=2, blank=True, null=True)
-    mac = models.CharField(max_length=2, blank=True, null=True)
-    serial = models.CharField(max_length=2, blank=True, null=True)
-    comments = models.CharField(max_length=2, blank=True, null=True)
+    so = models.CharField(max_length=20, choices=SO, blank=True, null=True)
+    ip = models.CharField(max_length=20, blank=True, null=True)
+    mac = models.CharField(max_length=20, blank=True, null=True)
+    serial = models.CharField(max_length=20, blank=True, null=True)
+    comments = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
         return self.plan.name
