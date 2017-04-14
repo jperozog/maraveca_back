@@ -11,6 +11,7 @@ from django.core.mail.message import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from accounts.permissions import IsSelf
 from rest_framework.authtoken.views import ObtainAuthToken
+from django.db.models import Q
 
 obtain_auth_token = ObtainAuthToken.as_view(
     serializer_class=accounts_serializers.AuthTokenSerializer
@@ -48,7 +49,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super(ClientViewSet, self).get_queryset()
         client_id = accounts_models.CLIENTE_REGISTRADO
-        queryset = queryset.filter(type_user=client_id)
+        queryset = queryset.filter(type_user=client_id, is_staff=False)
         return queryset
 
 
