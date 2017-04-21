@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from accounts.permissions import IsSelf
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.db.models import Q
+from rest_framework.decorators import detail_route
 
 obtain_auth_token = ObtainAuthToken.as_view(
     serializer_class=accounts_serializers.AuthTokenSerializer
@@ -63,6 +64,32 @@ class PotentialClientViewSet(viewsets.ModelViewSet):
         client_id = accounts_models.CLIENTE_POTENCIAL
         queryset = queryset.filter(type_user=client_id)
         return queryset
+
+    @detail_route(methods=['put'],
+                  permission_classes=(permissions.IsAuthenticated,),
+                  url_path="convert-to-client")
+    def convert_to_client(self, request, pk=None):
+        instance = self.get_object()
+        serializer = accounts_serializers.ClientSerializer
+        data = {}
+        fields_client = accounts_serializers.ClientSerializer.Meta.fields
+        fields_potential = accounts_serializers.ClientSerializer.Meta.fields
+        fields = list(set(fields_client) & set(fields_potential))
+        for field in fields:
+            try:
+                data[field] = getattr(instance, field)
+            except:
+                pass
+        for field in request.data.keys():
+            if request.data.get(field):
+                data[field] = request.data.get(field)
+        instance.type_user = accounts_models.CLIENTE_REGISTRADO
+        instance.save()
+        serializer = serializer(instance, data=data,
+                                context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=200)
 
 
 def generate_code(num_digits=6):

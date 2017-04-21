@@ -78,7 +78,7 @@ class ClientSerializer(UserSerializer):
     series_display = serializers.SerializerMethodField()
 
     def get_series_display(self, obj):
-        return obj.get_series_display()
+        return obj.get_series_display() if obj.series else ''
 
     class Meta:
         model = accounts_models.User
