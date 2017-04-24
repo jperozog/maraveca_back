@@ -51,6 +51,7 @@ class User(AbstractUser):
     birthdate = models.DateTimeField(blank=True, null=True)
     series = models.IntegerField(choices=SERIES, blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     email = models.EmailField(unique=True)
     recovery = models.CharField(max_length=10, blank=True, null=True)
     code_registry = models.CharField(max_length=20, blank=True, null=True)
