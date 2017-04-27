@@ -45,7 +45,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     plan_id = serializers.IntegerField()
     client_id = serializers.IntegerField()
     server_id = serializers.IntegerField()
-    celda_id = serializers.IntegerField()
+    celdaAP_id = serializers.IntegerField()
     additional = AdditionalSerializer(many=True, required=False, read_only=True)
     additional_id = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
     type_ip_display = serializers.SerializerMethodField()
@@ -94,6 +94,10 @@ class ServiceSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'plan': {'read_only': True},
             'client': {'read_only': True},
+            'server': {'read_only': True},
+            'celdaAP': {'read_only': True},
+            'server_id': {'write_only': True},
+            'celdaAP_id': {'write_only': True},
             'additional': {'required': False},
         }
         depth = 1
@@ -105,12 +109,12 @@ class ServiceSerializer(serializers.ModelSerializer):
         plan_id = validated_data.pop('plan_id')
         plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
-        if validated_data.get('celda_id'):
-            celda_id = validated_data.pop('celda_id')
-            celda = services_models.Celda.objects.get(id=celda_id)
-            validated_data['celda'] = celda
-        if validated_data.get('server_id'):
-            server_id = validated_data.pop('server_id')
+        celdaAP_id = validated_data.pop('celdaAP_id')
+        if celdaAP_id:
+            celda = services_models.Celda.objects.get(id=celdaAP_id)
+            validated_data['celdaAP'] = celda
+        server_id = validated_data.pop('server_id')
+        if server_id:
             server = services_models.Server.objects.get(id=server_id)
             validated_data['server'] = server
 
@@ -125,12 +129,12 @@ class ServiceSerializer(serializers.ModelSerializer):
         plan_id = validated_data.get('plan_id')
         plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
-        if validated_data.get('celda_id'):
-            celda_id = validated_data.pop('celda_id')
-            celda = services_models.Celda.objects.get(id=celda_id)
-            validated_data['celda'] = celda
-        if validated_data.get('server_id'):
-            server_id = validated_data.pop('server_id')
+        celdaAP_id = validated_data.pop('celdaAP_id')
+        if celdaAP_id:
+            celda = services_models.Celda.objects.get(id=celdaAP_id)
+            validated_data['celdaAP'] = celda
+        server_id = validated_data.pop('server_id')
+        if server_id:
             server = services_models.Server.objects.get(id=server_id)
             validated_data['server'] = server
 
