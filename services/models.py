@@ -107,6 +107,39 @@ class Additional(models.Model):
         return self.name
 
 
+class Server(models.Model):
+    """Servicios adicionales.
+
+    Acá se almacenan los servidores
+    que pueden agregarse a los planes contratados
+
+    """
+
+    name = models.CharField(max_length=20)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+
+class Celda(models.Model):
+    """Servicios adicionales.
+
+    Acá se almacenan las celdas
+    que pueden agregarse a los planes contratados
+
+    """
+
+    name = models.CharField(max_length=20)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
 class Service(models.Model):
     """Tabla de servicios.
 
@@ -137,9 +170,9 @@ class Service(models.Model):
     address = models.TextField(blank=True, null=True)
     phoneSMS = models.CharField(max_length=20, blank=True, null=True)
     phones = models.CharField(max_length=20, blank=True, null=True)
-    server = models.CharField(max_length=2, choices=SERVER, blank=True, null=True)
+    server = models.ForeignKey("Server", blank=True, null=True)
     type_ip = models.CharField(max_length=2, choices=TYPE_IP, default=DINAMICA)
-    celdaAP = models.CharField(max_length=2, choices=CELDA_AP, blank=True, null=True)
+    celdaAP = models.ForeignKey("Celda", blank=True, null=True)
     equipment = models.CharField(max_length=20, blank=True, null=True)
     email_alt = models.EmailField(blank=True, null=True)
     so = models.CharField(max_length=20, choices=SO, blank=True, null=True)

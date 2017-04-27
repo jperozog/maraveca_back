@@ -28,6 +28,12 @@ class Utils:
         }
         return data_user
 
+    def create_server(self):
+        data = {
+            'name': get_random_string(length=20)
+        }
+        return data
+
     def assertValues(self, data_user, user, excepts=set([])):
         for field in list(set(data_user.keys()) - set(excepts)):
             self.assertEqual(data_user[field], user.serializable_value(field))

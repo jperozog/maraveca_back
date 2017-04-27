@@ -11,6 +11,19 @@ class AdditionalSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ServerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = services_models.Server
+        fields = '__all__'
+
+
+class CeldaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = services_models.Celda
+        fields = '__all__'
+
 class PlanSerializer(serializers.ModelSerializer):
     monthly_type_plan_display = serializers.SerializerMethodField()
 
@@ -31,20 +44,18 @@ class ServiceSerializer(serializers.ModelSerializer):
     payment_method = serializers.SerializerMethodField()
     plan_id = serializers.IntegerField()
     client_id = serializers.IntegerField()
+    server_id = serializers.IntegerField()
+    celda_id = serializers.IntegerField()
     additional = AdditionalSerializer(many=True, required=False, read_only=True)
     additional_id = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
-    server_display = serializers.SerializerMethodField()
     type_ip_display = serializers.SerializerMethodField()
-    celdaAP_display = serializers.SerializerMethodField()
+
 
     def get_server_display(self, obj):
         return obj.get_server_display()
 
     def get_type_ip_display(self, obj):
         return obj.get_type_ip_display()
-
-    def get_celdaAP_display(self, obj):
-        return obj.get_celdaAP_display()
 
     def notificatios_method(self, obj):
         return obj.get_notificatios_method_display()
@@ -94,6 +105,14 @@ class ServiceSerializer(serializers.ModelSerializer):
         plan_id = validated_data.pop('plan_id')
         plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
+        if validated_data.get('celda_id'):
+            celda_id = validated_data.pop('celda_id')
+            celda = services_models.Celda.objects.get(id=celda_id)
+            validated_data['celda'] = celda
+        if validated_data.get('server_id'):
+            server_id = validated_data.pop('server_id')
+            server = services_models.Server.objects.get(id=server_id)
+            validated_data['server'] = server
 
         instance = super(ServiceSerializer, self).create(validated_data)
         return instance
@@ -106,6 +125,14 @@ class ServiceSerializer(serializers.ModelSerializer):
         plan_id = validated_data.get('plan_id')
         plan = services_models.Plan.objects.get(id=plan_id)
         validated_data['plan'] = plan
+        if validated_data.get('celda_id'):
+            celda_id = validated_data.pop('celda_id')
+            celda = services_models.Celda.objects.get(id=celda_id)
+            validated_data['celda'] = celda
+        if validated_data.get('server_id'):
+            server_id = validated_data.pop('server_id')
+            server = services_models.Server.objects.get(id=server_id)
+            validated_data['server'] = server
 
         instance = super(ServiceSerializer, self).update(instance,
                                                          validated_data)

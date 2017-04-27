@@ -27,7 +27,8 @@ router.register('signup', accounts_views.SignUpViewSet)
 router.register('service', services_views.ServiceViewSet)
 router.register('plan', services_views.PlanViewSet)
 router.register('additional', services_views.AdditionalViewSet)
-
+router.register('server', services_views.ServerViewSet)
+router.register('celda', services_views.CeldaViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

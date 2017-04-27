@@ -19,6 +19,8 @@ def create_client():
     return User.objects.create(username="rr@gg.cc", password="123456")
 
 
+
+
 class ServicesTest(APITestCase):
 
     def test_plan_create(self):
@@ -32,6 +34,10 @@ class ServicesTest(APITestCase):
             self.assertEqual(data[field], plan.serializable_value(field))
 
     def test_service_create(self):
+        celda = Celda(name="celda")
+        celda.save()
+        server = Server(name="server")
+        server.save()
         data = {
 
             "plan": create_plan(),
@@ -54,9 +60,9 @@ class ServicesTest(APITestCase):
             "address": "av 54 con calle 84 san Rafael",
             "phoneSMS": "04141234567",
             "phones": "04241234567 042698765432",
-            "server": "01",
+            "server": server,
             "type_ip": "DI",
-            "celdaAP": "01",
+            "celdaAP": celda,
             "equipment": "equipo",
             "email_alt": "email@mail.com",
             "so": "01",
@@ -67,7 +73,7 @@ class ServicesTest(APITestCase):
 
         }
         service = Service.objects.create(**data)
-        for field in list(set(data.keys()) - set(['client', 'plan'])):
+        for field in list(set(data.keys()) - set(['client', 'plan', 'server', 'celdaAP'])):
             self.assertEqual(data[field], service.serializable_value(field))
         self.assertEqual(data['client'].id, service.client.id)
         self.assertEqual(data['plan'].id, service.plan.id)

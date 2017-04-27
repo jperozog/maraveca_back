@@ -19,3 +19,13 @@ class AdditionalViewSet(viewsets.ModelViewSet):
     queryset = services_models.Additional.objects.all()
     permission_classes = (permissions.IsAuthenticated, IsAdmin)
     serializer_class = services_serializers.AdditionalSerializer
+
+class ServerViewSet(viewsets.ModelViewSet):
+    queryset = services_models.Server.objects.all()
+    #permission_classes = (permissions.IsAuthenticated, IsAdmin)
+    serializer_class = services_serializers.ServerSerializer
+
+class CeldaViewSet(viewsets.ModelViewSet):
+    queryset = services_models.Celda.objects.all()
+    #permission_classes = (permissions.IsAuthenticated, IsAdmin)
+    serializer_class = services_serializers.CeldaSerializer

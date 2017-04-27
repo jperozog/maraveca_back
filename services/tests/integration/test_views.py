@@ -13,7 +13,10 @@ class TestViews(TestCase, utils.Utils):
         self.create_user_staff()
 
     def test_create_service(self):
-        
+        celda = Celda(name="celda")
+        celda.save()
+        server = Server(name="server")
+        server.save()
         data = {
             'plan_id': 111,
             'notificatios_method': NOTIFICATIONS_METHOD,
@@ -34,9 +37,9 @@ class TestViews(TestCase, utils.Utils):
             "address": "av 54 con calle 84 san Rafael",
             "phoneSMS": "04141234567",
             "phones": "04241234567 042698765432",
-            "server": "01",
+            "server_id": server.id,
             "type_ip": "DI",
-            "celdaAP": "01",
+            "celdaAP_id": celda.id,
             "equipment": "equipo",
             "email_alt": "email@mail.com",
             "so": "01",
@@ -79,6 +82,4 @@ class TestViews(TestCase, utils.Utils):
         type_method = 'list'
 
         self.viewset_test(data, method, request, type_method, AdditionalViewSet)
-
-
 
