@@ -84,7 +84,8 @@ class ClientSerializer(UserSerializer):
         model = accounts_models.User
         fields = ('id', 'phone', 'phone2', 'address', 'equipment', 'service',
                   'first_name', 'last_name','series', 'series_display', 'comments',
-                  'description', 'email', 'date_joined', 'type_dni', 'dni', 'birthdate',)
+                  'description', 'email', 'date_joined', 'type_dni', 'dni', 'birthdate',
+                  'business_name', )
 
         extra_kwargs = {
             'id': {'read_only': True},

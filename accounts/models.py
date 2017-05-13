@@ -55,6 +55,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     recovery = models.CharField(max_length=10, blank=True, null=True)
     code_registry = models.CharField(max_length=20, blank=True, null=True)
+    business_name = models.TextField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
