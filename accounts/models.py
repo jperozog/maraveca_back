@@ -36,6 +36,11 @@ TYPE_DNI = (
     (GUBERNAMENTAL, 'Gubernamental'),
 )
 
+class ContactPeople(models.Model):
+    first_name = models.CharField(max_length=40, blank=True, null=True)
+    last_name = models.CharField(max_length=40, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
 class User(AbstractUser):
 
@@ -56,6 +61,8 @@ class User(AbstractUser):
     recovery = models.CharField(max_length=10, blank=True, null=True)
     code_registry = models.CharField(max_length=20, blank=True, null=True)
     business_name = models.TextField(blank=True, null=True)
+    contact_people = models.OneToOneField('ContactPeople', blank=True, null=True)
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -87,3 +94,4 @@ def send_email_registry(sender, instance, created, **kwargs):
 
 
 signals.post_save.connect(send_email_registry, sender=User)
+

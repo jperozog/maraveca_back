@@ -74,8 +74,15 @@ class SignupSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ContactPeopleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = accounts_models.ContactPeople
+        fields = '__all__'
+
 class ClientSerializer(UserSerializer):
     series_display = serializers.SerializerMethodField()
+    contact_people = ContactPeopleSerializer()
 
     def get_series_display(self, obj):
         return obj.get_series_display() if obj.series else ''
@@ -85,7 +92,8 @@ class ClientSerializer(UserSerializer):
         fields = ('id', 'phone', 'phone2', 'address', 'equipment', 'service',
                   'first_name', 'last_name','series', 'series_display', 'comments',
                   'description', 'email', 'date_joined', 'type_dni', 'dni', 'birthdate',
-                  'business_name', )
+                  'business_name', 'contact_people')
+
 
         extra_kwargs = {
             'id': {'read_only': True},
@@ -93,6 +101,7 @@ class ClientSerializer(UserSerializer):
             'dni': {'required': True},
             'type_dni': {'required': True}
         }
+        depth = 1
 
     def create(self, validated_data):
         dni = validated_data.get('dni')
@@ -103,6 +112,11 @@ class ClientSerializer(UserSerializer):
             raise serializers.ValidationError({'dni': msg})
         validated_data['username'] = validated_data.get('email')
         validated_data['type_user'] = accounts_models.CLIENTE_REGISTRADO
+        contact_people = validated_data.get('contact_people')
+        contact_people_model = ContactPeopleSerializer(data=contact_people)
+        contact_people_model.is_valid(raise_exception=True)
+        contact_people_model.save()
+        validated_data['contact_people'] = contact_people_model.instance
         instance = super(UserSerializer, self).create(validated_data)
         return instance
 
@@ -115,6 +129,16 @@ class ClientSerializer(UserSerializer):
             raise serializers.ValidationError({'dni': msg})
         validated_data['username'] = validated_data.get('email')
         validated_data['type_user'] = accounts_models.CLIENTE_REGISTRADO
+
+        contact_people = validated_data.get('contact_people')
+        user = user.first()
+        if not user.contact_people:
+            user.contact_people = accounts_models.ContactPeople().save()
+        contact_people_model = ContactPeopleSerializer(user.contact_people,
+                                                       data=contact_people)
+        contact_people_model.is_valid(raise_exception=True)
+        contact_people_model.save()
+        validated_data['contact_people'] = contact_people_model.instance
         instance = super(UserSerializer, self).update(instance, validated_data)
         return instance
 
