@@ -19,8 +19,33 @@ obtain_auth_token = ObtainAuthToken.as_view(
 )
 
 
+class SendMail:
+    @detail_route(methods=['post'], permission_classes=[permissions.IsAuthenticated],
+                  url_path='send-email')
+    def send_email(self, request, *args, **kwargs):
+        if not request.data.get("subject", None):
+            return Response("el campo 'subject' es requerido", status=400)
+
+        if not request.data.get("message", None):
+            return Response("el campo 'message' es requerido", status=400)
+
+        subject = request.data.get("subject")
+        message = request.data.get("message")
+        data = {
+            "subject": subject,
+            "message": message
+        }
+        html_content = render_to_string("email/message.html", data)
+
+        instance = self.get_object()
+        instance.email_user(subject=subject, message=message,
+                            from_email=settings.EMAIL_HOST_USER,
+                            html_message=html_content)
+        return Response({"success": True}, status=200)
+
+
 class SignUpViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-                    viewsets.GenericViewSet):
+                    viewsets.GenericViewSet, SendMail):
     queryset = accounts_models.User.objects.all()
     serializer_class = accounts_serializers.SignupSerializer
     filter_backends = (filters.DjangoFilterBackend,)
@@ -36,7 +61,7 @@ class SignUpViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
             return Response(u"Se requiere un codigo valido", status=405)
 
 
-class ClientViewSet(viewsets.ModelViewSet):
+class ClientViewSet(viewsets.ModelViewSet, SendMail):
     queryset = accounts_models.User.objects.all()
     serializer_class = accounts_serializers.ClientSerializer
     permission_classes = (permissions.IsAuthenticated, IsSelf,)
