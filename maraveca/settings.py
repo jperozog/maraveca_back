@@ -169,10 +169,11 @@ STATIC_ROOT = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
 
-EMAIL_HOST = 'e12.ehosts.com'
+# EMAIL_HOST = 'e12.ehosts.com'
+EMAIL_HOST = 'mail.maraveca.com'
 EMAIL_HOST_USER = 'no-responder@maraveca.com'
 EMAIL_HOST_PASSWORD = 'NoResponder2017%'
-EMAIL_PORT = 465
+EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
