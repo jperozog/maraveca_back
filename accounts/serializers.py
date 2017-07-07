@@ -131,7 +131,7 @@ class ClientSerializer(UserSerializer):
         validated_data['type_user'] = accounts_models.CLIENTE_REGISTRADO
 
         contact_people = validated_data.get('contact_people')
-        user = user.first()
+        user = instance
         if not user.contact_people:
             user.contact_people = accounts_models.ContactPeople().save()
         contact_people_model = ContactPeopleSerializer(user.contact_people,
