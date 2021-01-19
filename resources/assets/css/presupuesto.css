@@ -1,0 +1,7 @@
+body {
+    background-color: #ec3c3c !important;
+    background-image: url(../img/image1.jpg);
+    background-repeat: no-repeat;
+    background-position-y: bottom;
+    background-size: contain;
+}
