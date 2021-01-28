@@ -28,12 +28,16 @@ class aps extends Controller
         return response()->json($result);
     }
 
-    public function update(Request $request, $id)
-    {
-        $ap = ap::findOrFail($id);
-        $ap->update($request->all());
-
-        return $ap;
+    public function update(Request $request)
+    {   
+        
+        $datos = $request->datos;
+        
+    
+         $actualizarAp = DB::update("UPDATE aps SET nombre_ap = ?,ip_ap = ?,user_ap = ?,password_ap = ?,celda_ap = ? WHERE id = ?",
+                                    [$datos["nombre_ap"],$datos["ip_ap"],$datos["user_ap"],$datos["password_ap"],$datos["celda_ap"], $datos["id"]]);
+        
+        return response()->json($datos);
     }
 
     public function delete(Request $request, $id)

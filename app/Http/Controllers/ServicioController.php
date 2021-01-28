@@ -321,6 +321,11 @@ class ServicioController extends Controller
                 $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
                 $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
                 $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente1);
+                /*
+                if(strlen($cliente) > 60){
+
+                }
+                */
             }
         
                 retirar_ip_pd($instalacion->ipP_det,$cliente,$datos["ip_srvidor"],$datos["user_srvidor"],$datos["password_srvidor"],"P_I",0);   

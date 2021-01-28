@@ -60,7 +60,7 @@ Route::put('anular_balance_in_config/{id}', 'BalanceClienteInController@anular_b
 Route::get('celdas', 'CeldasController@index');
 Route::get('celdas/{id}', 'CeldasController@show');
 Route::post('celdas', 'CeldasController@store');
-Route::put('celdas/{id}', 'CeldasController@update');
+Route::put('celdas', 'CeldasController@update');
 Route::delete('celdas/{id}', 'CeldasController@delete');
 
 //rutas para los usuarios
@@ -94,7 +94,7 @@ Route::get('test', 'PotencialesController@index');
 Route::get('aps', 'aps@index');
 Route::get('aps/{id}', 'aps@show');
 Route::post('aps', 'aps@store');
-Route::put('aps/{id}', 'aps@update');
+Route::put('aps', 'aps@update');
 Route::delete('aps/{id}', 'aps@delete');
 
 //rutas para los soportes e instalaciones
@@ -381,6 +381,7 @@ Route::get('equiposInstalacion/{id}', 'Equipos2Controller@traerEquiposInstalacio
 Route::get('equipos2/{id}', 'Equipos2Controller@traerDatosEquipo');
 Route::get('tiposEquipos', 'Equipos2Controller@traerTiposEquipos');
 Route::post('agregarEquipo2', 'Equipos2Controller@agregarEquipo2');
+Route::put('editarEquipo', 'Equipos2Controller@editarEquipo');
 Route::post('agregarCategoria', 'Equipos2Controller@agregarCategoria');
 Route::get('equipos/{id}', 'EquiposController@show');
 Route::get('equit/{id}', 'EquiposController@equit');

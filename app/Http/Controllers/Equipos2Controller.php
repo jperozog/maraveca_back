@@ -54,6 +54,17 @@ class Equipos2Controller extends Controller
         return response()->json($result);
     }
 
+    public function editarEquipo(Request $request)
+    {
+        $datos = $request->datos;
+        
+    
+         $actualizarEquipos = DB::update("UPDATE equipos2 SET nombre_equipo = ?, tipo_equipo = ? WHERE id_equipo = ?",
+                                      [$datos["nombre_equipo"],$datos["tipo_equipo"],$datos["id_equipo"]]);
+        
+        return response()->json($datos);
+    }
+
 
     public function agregarCategoria(Request $request){
 

@@ -47,11 +47,12 @@ class ClientePotencialController extends Controller
                     }
                     if ($d->nombre == "altura") {
                         $f->altura = $d->valor;
-                    }
+                    }/*
                     if ($d->nombre == "usuario") {
                         $usuario = DB::select("SELECT * FROM users WHERE id_user = ?",[$d->valor])["0"];
                         $f->usuario_responsable = $usuario->nombre_user." ".$usuario->apellido_user;
                     }
+                    */
                     if ($d->nombre == "ptp") {
                         $equipo = DB::select("SELECT * FROM equipos2 WHERE id_equipo = ?",[$d->valor]);
                         if ($equipo != []) {
