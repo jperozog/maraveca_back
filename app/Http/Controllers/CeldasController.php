@@ -37,10 +37,6 @@ class CeldasController extends Controller
 
     public function update(Request $request)
     {
-        //$celdas = celdas::where('id_celda', '=', $id);
-        //$celdas->update($request->all());
-
-        //return $celdas;
 
         $datos = $request->datos;
         
