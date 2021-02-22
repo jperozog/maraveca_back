@@ -71,6 +71,15 @@ class InstalacionesController extends Controller
                                                         INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                         INNER JOIN users AS u ON s.user_insta = u.id_user
                                                             WHERE s.tipo_insta = 1 ORDER BY s.status_insta ASC, s.id_insta  DESC');
+
+                        foreach ($instalaciones as $i) {
+                            $ventas = DB::select("SELECT * FROM ventas WHERE cliente_venta = ? AND status_venta = 2",[$i->cliente_insta]); 
+
+                            if (count($ventas) > 0) {
+                                $i->fechaVenta = $ventas[0]->created_at;
+                            }
+                        }
+                                                          
                     }else{
                         if( $request["caja"] == 0){
                             $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
@@ -109,6 +118,14 @@ class InstalacionesController extends Controller
                                                         INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                         INNER JOIN users AS u ON s.user_insta = u.id_user
                                                             WHERE s.tipo_insta = 1 AND ser.id_srvidor = ? ORDER BY s.status_insta ASC, s.id_insta  DESC',[$request["mk"]]);
+
+                            foreach ($instalaciones as $i) {
+                                $ventas = DB::select("SELECT * FROM ventas WHERE cliente_venta = ? AND status_venta = 1",[$i->cliente_insta]); 
+                                    
+                                if (count($ventas) > 0) {
+                                    $i->fechaVenta = $ventas[0]->created_at;
+                                }
+                            }
                     }else{
                         if($request["caja"] == 0){
                             $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
@@ -383,7 +400,7 @@ class InstalacionesController extends Controller
         
         //variables para la creacion de una nueva instalacion//
         $id_usuario = $request ->input('id_user');
-        $id_cliente1 = $request ->input('id_cliente');
+        $id_cliente = $request ->input('id_cliente');
         $modelo = $request ->input("modeloEquipo"); 
         $modelo2 = $request ->input("modeloEquipo2"); 
         $celda = $request ->input("celda");  
@@ -399,38 +416,6 @@ class InstalacionesController extends Controller
         $check = $request ->input("check");
         $date = date("Y-m-d H:i:s"); 
 
-        
-        //SQLs para agendar cliente 
-        if($desde == 2){
-        $clientePotencial = DB::select("SELECT * FROM pclientes WHERE id = ?",[$id_cliente1])["0"];
-
-        $agregarCliente = DB::insert("INSERT INTO clientes (kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,serie,tipo_planes,phone1,phone2,social,comment,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                                         [
-                                            $clientePotencial->kind,
-                                            $clientePotencial->dni,
-                                            $clientePotencial->email,
-                                            $clientePotencial->nombre,
-                                            $clientePotencial->apellido,
-                                            $clientePotencial->direccion,
-                                            $clientePotencial->estado,
-                                            $clientePotencial->municipio,
-                                            $clientePotencial->parroquia,
-                                            $clientePotencial->day_of_birth,
-                                            $clientePotencial->serie,
-                                            1,
-                                            $clientePotencial->phone1,
-                                            $clientePotencial->phone2,
-                                            $clientePotencial->social,
-                                            $clientePotencial->comment,
-                                            $date,
-                                            $date
-                                         ]);
-
-        $id_cliente = DB::select("SELECT * FROM clientes ORDER BY id DESC LIMIT 1")["0"]->id;                                 
-        }
-        if($desde == 1){
-            $id_cliente = $request ->input('id_cliente');
-        }
         
         //SQLs para la crear una nueva instalacion tanto en la tabla soporte como en la table tipos_soportes//
         if ($check == 0) {
@@ -976,6 +961,12 @@ class InstalacionesController extends Controller
        
         
         $actInstalacion = DB::update("UPDATE instalaciones SET status_insta = 2 WHERE id_insta = ?",[$id]);
+
+        $venta = DB::select("SELECT * FROM ventas WHERE cliente_venta = ? AND status_venta = 2",[$instalacion->cliente_insta]);
+
+        if (count($venta) > 0) {
+            $actVenta = DB::update("UPDATE ventas SET status_venta = 3 WHERE id_venta = ?",[$venta[0]->id_venta]);
+        }
 
         if($request->tipo_insta == 1){
 

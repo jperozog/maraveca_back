@@ -35,12 +35,16 @@ class CeldasController extends Controller
         return response()->json($result);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $celdas = celdas::where('id_celda', '=', $id);
-        $celdas->update($request->all());
 
-        return $celdas;
+        $datos = $request->datos;
+        
+    
+         $actualizarCelda = DB::update("UPDATE celdas SET nombre_celda = ?,servidor_celda = ? WHERE id_celda = ?",
+                                      [$datos["nombre_celda"],$datos["servidor_celda"],$datos["id_celda"]]);
+        
+        return response()->json($datos);
     }
 
     public function delete(Request $request, $id)

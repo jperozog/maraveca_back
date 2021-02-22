@@ -46,9 +46,15 @@ class cortes_prog extends Command
     public function handle()
     {
 
+                $servicios = DB::select("SELECT co.*,c.*,s.*,p.*,co.id AS id_prog FROM corte_progs AS co
+                                            INNER JOIN clientes AS c ON co.id_cliente = c.id
+                                            INNER JOIN servicios AS s ON co.id_servicio = s.id_srv
+                                            INNER JOIN planes AS p ON s.plan_srv = p.id_plan
+                                                WHERE co.status = 1");
 
 
 
+                    /*
                 $servicios=corte_prog::select('corte_progs.*', 'clientes.*', 'servidores.*', 'servicios.*', 'planes.*', 'corte_progs.id as id_prog')
                     ->join('servicios', 'servicios.id_srv', '=', 'corte_progs.id_servicio')
                     ->join('aps','aps.id','=','servicios.ap_srv')
@@ -58,7 +64,7 @@ class cortes_prog extends Command
                     ->join('servidores','celdas.servidor_celda','=','servidores.id_srvidor')
                     ->where('corte_progs.status','=', '1')
                     ->get();
-
+                    */
 
 
                 foreach ($servicios as $moroso) {
@@ -66,61 +72,141 @@ class cortes_prog extends Command
                     $today = \Carbon\Carbon::now();
                     $fecha = $today->toDateString();
 
+                    if ($moroso->tipo_srv == 1) {
+                        $masDatos = DB::select("SELECT * FROM aps AS a
+                                                    INNER JOIN celdas AS c ON a.celda_ap = c.id_celda
+                                                    INNER JOIN servidores AS s ON c.servidor_celda = s.id_srvidor ")[0];
+                        
+                        $moroso->ip_srvidor = $masDatos->ip_srvidor;
+                        $moroso->user_srvidor = $masDatos->user_srvidor;
+                        $moroso->password_srvidor = $masDatos->password_srvidor;
+                    } else {
+                        $masDatos = DB::select("SELECT * FROM caja_distribucion AS c
+                                                    INNER JOIN manga_empalme AS m ON c.manga_caja = c.id_manga
+                                                    INNER JOIN olts AS o ON m.olt_manga = o.id_olt
+                                                    INNER JOIN servidores AS s ON o.servidor_olt = s.id_srvidor ")[0];
+                        $moroso->ip_srvidor = $masDatos->ip_srvidor;
+                        $moroso->user_srvidor = $masDatos->user_srvidor;
+                        $moroso->password_srvidor = $masDatos->password_srvidor;
+                    }
+
 
                     if($fecha_prog <= $fecha )
                     {
                         echo $fecha. "\n";
                         echo $fecha_prog. "\n";
                         corte_prog::where('id', $moroso->id_prog)->update(['contador'=>($moroso->contador+1)]);
-                    cola_de_ejecucion::create(['id_srv'=>$moroso->id_srv, 'accion'=>'s', 'contador'=>'1']);
+                        cola_de_ejecucion::create(['id_srv'=>$moroso->id_srv, 'accion'=>'s', 'contador'=>'1']);
                         /*===================================================== para suspender cliente===========================================================*/
 
 
-                        if((strtolower($moroso->kind)=='g'||strtolower($moroso->kind)=='j')&&(strtolower($moroso->social)!= 'null' && $moroso->kind != null)){
-                            $cliente1= ucwords(strtolower($moroso->social));
-                            $remp_cliente= array('ñ', 'Ñ');
-                            $correct_cliente= array('n', 'N');
-                            $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
-                        }else {
+                        if( $moroso->kind == 'V'|| $moroso->kind =='E'){
+                            $nombre4 = explode(" ",$moroso->nombre);
+                            $apellido4 = explode(" ",$moroso->apellido);
+                            $cliente3= ucfirst($nombre4[0])." ".ucfirst($apellido4[0]);
+            
                             $cliente1= ucfirst($moroso->nombre)." ".ucfirst($moroso->apellido);
-                            $remp_cliente= array('ñ', 'Ñ');
-                            $correct_cliente= array('n', 'N');
+                            $remp_cliente= array('À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Ü','Ý','Þ','ß','à','á','â','ã','ä','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ','ö','ø','ù','ú','û','ý','ý','þ','ÿ');
+                            $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
                             $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
+                            $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente3);
+                        }else {
+                            $cliente1= ucwords(strtolower($moroso->social));
+                            $remp_cliente= array('À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Ü','Ý','Þ','ß','à','á','â','ã','ä','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ','ö','ø','ù','ú','û','ý','ý','þ','ÿ');
+                            $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
+                            $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
+                            $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente1);
+                            
                         }
-                        $API = new RouterosAPI();
-                        if ($API->connect($moroso->ip_srvidor, $moroso->user_srvidor, $moroso->password_srvidor)) {
-                            $API->write('/ip/firewall/address-list/print',false);
-                            $API->write('?list=ACTIVOS',false);
-                            $API->write('?disabled=false',false);
-                            $API->write('?address='.$moroso->ip_srv,true);
-                            $READ = $API->read(false);
-                            $ARRAY = $API->parseResponse($READ);
-                            if(count($ARRAY)>0){
-                                $API->write('/ip/firewall/address-list/remove', false);
-                                $API->write('=.id=' . $ARRAY[0]['.id']);
-                                $READ = $API->read(false);
-                                //return $READ;
-                            }
-                            $API->write("/queue/simple/getall",false);
-                            $API->write('?name='.$cliente."(".$moroso->ip_srv.")",true);
-                            $READ = $API->read(false);
-                            $ARRAY = $API->parseResponse($READ);
-                            if(count($ARRAY)>0) {
-                                $API->write("/queue/simple/remove", false);
-                                $API->write('=.id=' . $ARRAY[0]['.id']);
+                        
+                        if($moroso->tipo_srv == 1){
+                            $API = new RouterosAPI();
+                            if ($API->connect($moroso->ip_srvidor, $moroso->user_srvidor, $moroso->password_srvidor)) {                                  //se conecta y verifica si el cliente exista en la lista
+                                $API->write('/ip/firewall/address-list/print',false);
+                                $API->write('?list=ACTIVOS',false);
+                                $API->write('?disabled=false',false);
+                                $API->write('?address='.$moroso->ip_srv,true);
                                 $READ = $API->read(false);
                                 $ARRAY = $API->parseResponse($READ);
-
-                            }
-
+                                if(count($ARRAY)>0) {
+                                    $API->write('/ip/firewall/address-list/remove', false); // en caso de existir lo eliminara
+                                    $API->write('=.id=' . $ARRAY[0]['.id']);
+                                    $READ = $API->read(false);
+                                    //return $READ;
+                                }
+                          
+                                  $API->write('/ppp/secret/print',false);
+                                      $API->write('?remote-address='.$moroso->ip_srv,true);
+                                      $READ = $API->read(false);
+                                      $ARRAY = $API->parseResponse($READ);
+                                      if(count($ARRAY)>0) {
+                                          $API->write('/ppp/secret/remove', false); // en caso de existir lo eliminara
+                                          $API->write('=.id=' . $ARRAY[0]['.id']);
+                                          $READ = $API->read(false);
+                                          //return $READ;
+                                      }        //cola_de_ejecucion::where('soporte_pd', $id_soporte)->where('accion', 'r_p_i')->delete();
+                                          $API->write('/ppp/active/print',false);
+                                          $API->write('?address='.$moroso->ip_srv,true);
+                                          $READ = $API->read(false);
+                                          $ARRAY = $API->parseResponse($READ);
+                                          var_dump($ARRAY);
+                                          
+                                          if(count($ARRAY)>0) {
+                                              $API->write('/ppp/active/remove', false); // en caso de existir lo eliminara
+                                              $API->write('=.id=' . $ARRAY[0]['.id']);
+                                              $READ = $API->read(false);
+                                              //return $READ;
+                                          }  
+                                
+                          
                             cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $moroso->ip_srv)->where('accion', 's')->delete();
                             historico_cliente::create(['history'=>'Suspension automatica por no cumplir compromiso de pago', 'modulo'=>'Facturacion', 'cliente'=>$moroso->cliente_srv, 'responsable'=>'0']);
-
+              
                             $servicios1 = servicios::where('ip_srv', $moroso->ip_srv);
                             $servicios1->update(["stat_srv"=>3]);
+                            }
+                            $API->disconnect();
+                        }else{
+                            $API = new RouterosAPI();
+                            if ($API->connect($moroso->ip_srvidor, $moroso->user_srvidor, $moroso->password_srvidor)) {                                  //se conecta y verifica si el cliente exista en la lista
+                            $API->write('/ppp/secret/print',false);
+                                    $API->write('?name='.$cliente2."(".$mososo->id_srv.")",true);
+                                    $READ = $API->read(false);
+                                    $ARRAY = $API->parseResponse($READ);
+                                    if(count($ARRAY)>0) {
+                                        $API->write('/ppp/secret/remove', false); // en caso de existir lo eliminara
+                                        $API->write('=.id=' . $ARRAY[0]['.id']);
+                                        $READ = $API->read(false);
+                                        //return $READ;
+                                    }        //cola_de_ejecucion::where('soporte_pd', $id_soporte)->where('accion', 'r_p_i')->delete();
+                                        $API->write('/ppp/active/print',false);
+                                        $API->write('?name='.$cliente2."(".$mososo->id_srv.")",true);
+                                        $READ = $API->read(false);
+                                        $ARRAY = $API->parseResponse($READ);
+                                        var_dump($ARRAY);
+                                        
+                                        if(count($ARRAY)>0) {
+                                            $API->write('/ppp/active/remove', false); // en caso de existir lo eliminara
+                                            $API->write('=.id=' . $ARRAY[0]['.id']);
+                                            $READ = $API->read(false);
+                                            //return $READ;
+                                        }  
+                                cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $moroso->ip_srv)->where('accion', 's')->delete();
+                                historico_cliente::create(['history'=>'Suspension automatica por no cumplir compromiso de pago', 'modulo'=>'Facturacion', 'cliente'=>$moroso->cliente_srv, 'responsable'=>'0']);
+                          
+                                $servicios1 = servicios::where('ip_srv', $moroso->ip_srv);
+                                $servicios1->update(["stat_srv"=>3]);
 
+                                }
+                                $API->disconnect();
                         }
-                        $API->disconnect();
+                    
+
+
+
+
+
+
                         corte_prog::where('id', $moroso->id_prog)->update(['status'=>2]);
                         /*===================================================== Mensaje al cliente===========================================================*/
                     $debe=0; //variable para contador

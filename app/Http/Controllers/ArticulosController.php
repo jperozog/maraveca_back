@@ -88,8 +88,8 @@ class ArticulosController extends Controller
     public function articulosCategorias2(Request $request){
 
         
-        $modelo = $request->input('modelo');
-        $id = $request->input('id_zona');
+        $modelo = $request->modelo;
+        $id = $request->id_zona;
         
         $result =  DB::select('SELECT * FROM articulos AS a
                                      INNER JOIN tipo_articulos AS t ON a.id_tipo_articulo = t.id_tipo_art

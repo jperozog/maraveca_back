@@ -90,28 +90,50 @@ class corte_promo extends Command
 
                     $result = DB::select("SELECT * FROM servicios AS s
                                                 INNER JOIN clientes AS cl ON s.cliente_srv = cl.id
-                                                INNER JOIN aps AS a ON s.ap_srv = a.id
-                                                INNER JOIN celdas AS c ON a.celda_ap = c.id_celda
-                                                INNER JOIN servidores AS se ON c.servidor_celda = se.id_srvidor 
                                                 INNER JOIN planes AS p ON s.plan_srv = p.id_plan
-                                                    WHERE s.id_srv = ?",[$promo->id_servicio_p])[0];
+                                                  WHERE s.id_srv = ?",[$promo->id_servicio_p])[0];
+
+                    if ($result->tipo_srv == 1) {
+                      $masDatos = DB::select("SELECT * FROM aps AS a
+                                                INNER JOIN celdas AS c ON a.celda_ap = c.id_celda
+                                                INNER JOIN servidores AS s ON c.servidor_celda = s.id_srvidor
+                                                  WHERE a.id = ?",[$result->ap_srv])[0];
+                    } else {
+                      $masDatos = DB::select("SELECT * FROM caja_distribucion AS c
+                                                INNER JOIN manga_empalme AS m ON c.manga_caja = m.id_manga
+                                                INNER JOIN olts AS o ON m.olt_manga = o.id_olt
+                                                INNER JOIN servidores AS s ON o.servidor_olt = s.id_srvidor
+                                                  WHERE c.id_caja = ?",[$result->ap_srv])[0];
+                    }
+                                                  
+
+
                     $ip = $result->ip_srv;
 
-                    if($result->social == "null" || $result->social == null){
-                      $cliente1 = ucfirst($result->nombre) . " " . ucfirst($result->apellido);
-                      $remp_cliente = array('ñ', 'Ñ');
-                      $correct_cliente = array('n', 'N');
+                    if($result->kind == "V" || $result->kind == "E"){
+                      $nombre4 = explode(" ",$result->nombre);
+                      $apellido4 = explode(" ",$result->apellido);
+                      $cliente3= ucfirst($nombre4[0])." ".ucfirst($apellido4[0]);
+      
+                      $cliente1= ucfirst($result->nombre)." ".ucfirst($result->apellido);
+                      $remp_cliente= array('À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Ü','Ý','Þ','ß','à','á','â','ã','ä','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ','ö','ø','ù','ú','û','ý','ý','þ','ÿ');
+                      $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
                       $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
+                      $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente3);
                     } else{
-                      $cliente1 = ucwords(strtolower($result->social));
-                      $remp_cliente = array('ñ', 'Ñ');
-                      $correct_cliente = array('n', 'N');
+                      $cliente1= ucwords(strtolower($result->social));
+                      $remp_cliente= array('À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Ü','Ý','Þ','ß','à','á','â','ã','ä','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ','ö','ø','ù','ú','û','ý','ý','þ','ÿ');
+                      $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
                       $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
+                      $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente1);
                     }    
+
+
+
                     
-                    $MK = $result->ip_srvidor;
-                    $usermk = $result->user_srvidor;
-                    $passwordmk = $result->password_srvidor;
+                    $MK = $masDatos->ip_srvidor;
+                    $usermk = $masDatos->user_srvidor;
+                    $passwordmk = $masDatos->password_srvidor;
                     $dmb_plan = $promo->dmb_plan;
                     $umb_plan = $promo->umb_plan;
 
@@ -135,30 +157,46 @@ class corte_promo extends Command
                       $READ = $API->read(false);
                       $ARRAY = $API->parseResponse($READ);
                       if(count($ARRAY)>0){
-              
-                      $API->write("/queue/simple/getall",false);  // aqui comienza el proceso de agregar el cliente activo en la lista queue, validando que no exista
-                      $API->write('?name='.$cliente."(".$id_srv.")",true);
-                      $READ = $API->read(false);
-                      $ARRAY = $API->parseResponse($READ);
-              
+                        if ($result->tipo_srv == 1) {
+                          $API->write('/ppp/secret/print',false);
+                          $API->write('?name='.$cliente."(".$id_srv.")",true);
+                          $READ = $API->read(false);
+                          $ARRAY = $API->parseResponse($READ);
+                        }else{
+                          $API->write('/ppp/secret/print',false);
+                          $API->write('?name='.$cliente2."(".$id_srv.")",true);
+                          $READ = $API->read(false);
+                          $ARRAY = $API->parseResponse($READ);
+                        }  
                       if(count($ARRAY)>0) {                                                                //  valida que  exista el cliente registrado en la lista y lo edita
-                          $API->write("/queue/simple/set", false);
-                          $API->write('=.id=' . $ARRAY[0]['.id'], false);
-                          $API->write('=max-limit='.$umb_plan."M". "/".$dmb_plan."M" ,false);   //   2M/2M   [TX/RX]
-                          $API->write('=parent='.$parent,true);         // comentario
+                         
+                        $API->write('/ppp/secret/set',false);
+                        $API->write('=.id='.$ARRAY[0]['.id'],false);
+                        $API->write('=profile='.$result->name_plan,true);
+                        $READ = $API->read(false);
+                        $ARRAY = $API->parseResponse($READ);
+
+
+                        if ($result->tipo_srv == 1) {
+                          $API->write('/ppp/active/print',false);
+                          $API->write('?name='.$cliente."(".$id_srv.")",true);
                           $READ = $API->read(false);
                           $ARRAY = $API->parseResponse($READ);
-                      }else{
-                          // aqui valida que no exista el cliente registrado en la lista y lo agrega
-                          $API->write("/queue/simple/add",false);
-                          $API->write('=target='.$ip,false);   // IP
-                          $API->write('=name='.$cliente."(".$id_srv.")",false);       // nombre
-                          $API->write('=max-limit='.$umb_plan."M". "/".$dmb_plan."M" ,false);   //   2M/2M   [TX/RX]
-                          $API->write('=parent='.$parent,true);         // comentario
+                        }else{
+                          $API->write('/ppp/active/print',false);
+                          $API->write('?name='.$cliente2."(".$id_srv.")",true);
                           $READ = $API->read(false);
                           $ARRAY = $API->parseResponse($READ);
-              
+                        }
+                        if(count($ARRAY)>0) {
+                            $API->write('/ppp/active/remove', false); // en caso de existir lo eliminara
+                            $API->write('=.id=' . $ARRAY[0]['.id']);
+                            $READ = $API->read(false);
+                            //return $READ;
+                        } 
+                        
                       }
+
                           if ($parent=="none"){                                               // en esta seccion si el cliente es simetrico (parent= none) lo mueve de posicion "0"
                               $API->write('/queue/simple/getall', false);
                               $API->write('?name='.$cliente."(".$id_srv.")");
@@ -190,11 +228,14 @@ class corte_promo extends Command
                   $finPromo = DB::update("UPDATE fac_promo SET status = 2 WHERE id_promo = ?",[$promo->id_promo]);
                     echo "Promocion eliminada, cliente:(".$id_srv.")\n";
                     //$eliminar  = DB::delete("DELETE FROM fac_promo WHERE id_promo = ?",[$promo->id_promo]);
-
-                    $fecha = date("d/m/Y");
-                    \Artisan::call('factura:generar', [
-                      'cliente' => $promo->id_cliente_p, 'fecha'=>$fecha, 'pro'=>1, 'nro_servicio'=>$promo->id_servicio_p, 'responsable'=>0
-                  ]);
+                    if ($result->serie == 1) {
+                     
+                    }else{
+                      $fecha = date("d/m/Y");
+                      \Artisan::call('factura:generar', [
+                        'cliente' => $promo->id_cliente_p, 'fecha'=>$fecha, 'pro'=>1, 'nro_servicio'=>$promo->id_servicio_p, 'responsable'=>0
+                    ]);
+                    }
                   }
                   
                   historico::create(['responsable'=>0, 'modulo'=>'Promociones', 'detalle'=>'Culminaciones de Promocion']);
