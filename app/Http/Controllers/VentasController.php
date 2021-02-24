@@ -16,7 +16,7 @@ class VentasController extends Controller
     {
 
         if($request->user == 1){
-            $ventas = DB::select("SELECT * FROM ventas AS v 
+            $ventas = DB::select("SELECT  v.*,c.*, v.created_at AS fecha_venta FROM ventas AS v 
                                     INNER JOIN clientes AS c ON v.cliente_venta = c.id");
 
             foreach ($ventas as $v) {
@@ -27,8 +27,8 @@ class VentasController extends Controller
             }                            
 
         }else{
-            $ventas = DB::select("SELECT * FROM ventas AS v 
-            INNER JOIN clientes AS c ON v.cliente_venta = c.id WHERE responsable_venta = ?",[$request->user]);
+            $ventas = DB::select("SELECT v.*,c.*, v.created_at AS fecha_venta FROM ventas AS v 
+                                    INNER JOIN clientes AS c ON v.cliente_venta = c.id WHERE responsable_venta = ?",[$request->user]);
 
                 foreach ($ventas as $v) {
                     if ($v->promo_venta != 0 ) {
@@ -46,6 +46,8 @@ class VentasController extends Controller
     public function store(Request $request)
     {
         $date = date("Y-m-d H:i:s");
+        if ($request->desde == 1) {
+          
         $clientePotencial = DB::select("SELECT * FROM pclientes WHERE id = ?",[$request->cliente])["0"];
 
         $agregarCliente = DB::insert("INSERT INTO clientes (kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,serie,tipo_planes,phone1,phone2,social,comment,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -74,6 +76,10 @@ class VentasController extends Controller
 
         $actualizarPotencial = DB::update("UPDATE pclientes SET id_cli = ? WHERE id = ?",[$id_cliente,$request->cliente]);
 
+        } else {
+            $id_cliente = $request->cliente;
+        }
+       
 
         $agregarVenta = DB::insert("INSERT INTO ventas(cliente_venta,promo_venta,status_venta,tasa_venta,responsable_venta,created_at,updated_at) VALUES (?,?,?,?,?,?,?)",[$id_cliente,0,1,1,$request->user,$date,$date]);
 

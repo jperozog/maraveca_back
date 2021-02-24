@@ -273,11 +273,7 @@
 								<tbody style="font-size: 15px;">
 								<?php $__currentLoopData = $facturacion; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $factura): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 								<tr>
-									<?php if($factura->fac_num!=null): ?>
-									<th scope="row" style="color: #2096c5;"><?php echo e($factura->fac_num); ?></th>
-									<?php else: ?>
-									<th scope="row" style="color: #2096c5;"><?php echo e($factura->id); ?></th>
-									<?php endif; ?>
+									
 									<td><?php if($factura->denominacion != '$' ): ?>
 										<?php echo e(number_format($factura->monto,2)." "); ?>Bs.S.
 										<?php else: ?>

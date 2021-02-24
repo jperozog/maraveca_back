@@ -2,10 +2,10 @@
 
 
     <label for=" Cedula" class="col-md-4 control-label">Cedula/RIF</label>
-    <input id="dni" type="text" class="form-control" name="dni" value="{{ old('dni') }}" required autofocus>
+    <input id="dni" type="text" class="form-control" name="dni" value="<?php echo e(old('dni')); ?>" required autofocus>
 
     <label for="password" class="col-md-4 control-label">Password</label>
-    <input id="password" type="password" class="form-control" name="password" value="{{ old('password') }}" required autofocus>
+    <input id="password" type="password" class="form-control" name="password" value="<?php echo e(old('password')); ?>" required autofocus>
 
     <button type="submit" class="btn btn-primary">
         Login
@@ -25,20 +25,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
-    <link rel="icon" type="image/png" href="{{asset('images/icons/favicon.ico')}}" />
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/icons/favicon.ico')); ?>" />
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('vendor/bootstrap/css/bootstrap.min.css')); ?>">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('fonts/font-awesome-4.7.0/css/font-awesome.min.css')); ?>">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/animate/animate.css')}}">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('vendor/animate/animate.css')); ?>">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/css-hamburgers/hamburgers.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('vendor/css-hamburgers/hamburgers.min.css')); ?>">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/select2/select2.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('vendor/select2/select2.min.css')); ?>">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{asset('css/util.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('css/main.css')}}">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('css/util.css')); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo e(asset('css/main.css')); ?>">
     <!--===============================================================================================-->
 </head>
 
@@ -51,22 +51,25 @@
                   
                 </div>
 
-                <form class="login100-form validate-form" method="POST" action="{{ route('loginprocess') }}">
-                    {{ csrf_field() }}
+                <form class="login100-form validate-form" method="POST" action="<?php echo e(route('loginprocess')); ?>">
+                    <?php echo e(csrf_field()); ?>
+
                     <span class="login100-form-title">
                        Mi Ventana
                     </span>
                     <div class="wrap-input100 alert-danger" role="alert" align="center"
                         style="background-color: #fff;color: ##FF0004;border-color: #fff;">
-                        @if($errors->any())
-                        {{$errors->first()}}
-                        @endif
+                        <?php if($errors->any()): ?>
+                        <?php echo e($errors->first()); ?>
+
+                        <?php endif; ?>
                     </div>
                     <div class="wrap-input100 alert-success" role="alert" align="center"
                         style="background-color: #fff;color: #155724;border-color: #fff;">
-                        @if(session('success'))
-                        {{session('success')}}
-                        @endif
+                        <?php if(session('success')): ?>
+                        <?php echo e(session('success')); ?>
+
+                        <?php endif; ?>
                     </div>
                     <div class="wrap-input100">
                         <select class="input100" id="dni" type="select" class="form-control" name="kind" required
@@ -102,9 +105,10 @@
                     </div>
 
                     <!-- <div class="wrap-input100 alert-danger" align="center">
-						@if($errors->any())
-						{{$errors->first()}}
-						@endif
+						<?php if($errors->any()): ?>
+						<?php echo e($errors->first()); ?>
+
+						<?php endif; ?>
 					</div> -->
 
                     <div class="container-login100-form-btn">
@@ -146,21 +150,21 @@
 
 
     <!--===============================================================================================-->
-    <script src="{{asset('vendor/jquery/jquery-3.2.1.min.js')}}"></script>
+    <script src="<?php echo e(asset('vendor/jquery/jquery-3.2.1.min.js')); ?>"></script>
     <!--===============================================================================================-->
-    <script src="{{asset ('vendor/jquerymask/jquery.mask.min.js')}}"></script>
+    <script src="<?php echo e(asset ('vendor/jquerymask/jquery.mask.min.js')); ?>"></script>
     <!--===============================================================================================-->
-    <script src="{{asset('vendor/bootstrap/js/popper.js')}}"></script>
-    <script src="{{asset('vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+    <script src="<?php echo e(asset('vendor/bootstrap/js/popper.js')); ?>"></script>
+    <script src="<?php echo e(asset('vendor/bootstrap/js/bootstrap.min.js')); ?>"></script>
     <!--===============================================================================================-->
-    <script src="{{asset('vendor/select2/select2.min.js')}}"></script>
+    <script src="<?php echo e(asset('vendor/select2/select2.min.js')); ?>"></script>
     <!--===============================================================================================-->
-    <script src="{{asset('vendor/tilt/tilt.jquery.min.js')}}"></script>
+    <script src="<?php echo e(asset('vendor/tilt/tilt.jquery.min.js')); ?>"></script>
     <script>
 
     </script>
     <!--===============================================================================================-->
-    <script src="{{asset('js/main.js')}}"></script>
+    <script src="<?php echo e(asset('js/main.js')); ?>"></script>
 
 </body>
 

@@ -2,7 +2,7 @@
 
 <head>
     <!--===============================================================================================-->
-    <link rel="icon" type="image/png" href="{{asset('images/icons/favicon.ico')}}" />
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/icons/favicon.ico')); ?>" />
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -188,7 +188,7 @@
         padding: 8px 0
     }
 
-    @media print {
+    @media  print {
 
         .no-print,
         .no-print * {
@@ -205,7 +205,7 @@
             } */
     }
 
-    /* @media print {
+    /* @media  print {
             .invoice {
                 font-size: 11px!important;
                 overflow: hidden!important
@@ -257,8 +257,8 @@
                     }
                 });
                 </script>
-                <form class="form-right" method="POST" action="{{ route('downloadPDF') }}">
-                    <input type="hidden" id="id" name="factura" value="{{json_encode($factura->id)}}">
+                <form class="form-right" method="POST" action="<?php echo e(route('downloadPDF')); ?>">
+                    <input type="hidden" id="id" name="factura" value="<?php echo e(json_encode($factura->id)); ?>">
                     <button class="btn btn-info no-print"
                         style="font-family: montserrat;font-size: 15px;line-height: 1.5;color: #fff;text-transform: uppercase;background-color: #2096c5;border-radius: 25px;justify-content: center;align-items: center;padding: 10px 20px;transition: all 0.4s;"
                         type="submit"><i class="fas fa-file-download"></i> Guardar PDF</button>
@@ -272,7 +272,7 @@
                     <div class="row">
                         <div class="col">
                             <a target="_blank" href="https://maraveca.com">
-                                <img src="{{asset('images/avtar.png')}}" width="468"
+                                <img src="<?php echo e(asset('images/avtar.png')); ?>" width="468"
                                     height="110" alt="" />
                                  </a>
                         </div>
@@ -298,36 +298,44 @@
                     <div class="row contacts">
                         <div class="col invoice-to">
                             <div class="text-gray-light" style="font-weight: bold;">FACTURA DE:</div>
-                            <h2 class="to" style="color: #2096C5;">{{ucwords($factura->cliente) }}</h2>
-                            <div class="address">@if($cliente->serie == '1')
-                                {{$factura->address}}
-                                @else
-                                {{$factura->address}}
-                                @endif</div>
-                            <div class="email">{{$factura->email}}</div>
+                            <h2 class="to" style="color: #2096C5;"><?php echo e(ucwords($factura->cliente)); ?></h2>
+                            <div class="address"><?php if($cliente->serie == '1'): ?>
+                                <?php echo e($factura->address); ?>
+
+                                <?php else: ?>
+                                <?php echo e($factura->address); ?>
+
+                                <?php endif; ?></div>
+                            <div class="email"><?php echo e($factura->email); ?></div>
                         </div>
                         <div class="col invoice-details">
                             <h1 class="invoice-id" style="font-family: montserrat;color: #2096c5;">
-                                @if(isset($factura->fac_num))
-                                @if($cliente->serie == '1')
-                                Recibo: {{$factura->fac_num}}
-                                @else
-                                Recibo: {{$factura->fac_num}}
-                                @endif
-                                @else
-                                @if($cliente->serie == '1')
-                                Recibo: {{$factura->id}}
-                                @else
-                                Recibo: {{$factura->id}}
-                                @endif
-                                @endif</h1>
-                            <div class="date">Emisión: {{date('d-m-Y', strtotime($factura->created_at))}}</div>
+                                <?php if(isset($factura->fac_num)): ?>
+                                <?php if($cliente->serie == '1'): ?>
+                                Recibo: <?php echo e($factura->fac_num); ?>
+
+                                <?php else: ?>
+                                Recibo: <?php echo e($factura->fac_num); ?>
+
+                                <?php endif; ?>
+                                <?php else: ?>
+                                <?php if($cliente->serie == '1'): ?>
+                                Recibo: <?php echo e($factura->id); ?>
+
+                                <?php else: ?>
+                                Recibo: <?php echo e($factura->id); ?>
+
+                                <?php endif; ?>
+                                <?php endif; ?></h1>
+                            <div class="date">Emisión: <?php echo e(date('d-m-Y', strtotime($factura->created_at))); ?></div>
                             <div class="date">
-                                @if(ucwords(strtolower($cliente->kind))=='V'||ucwords(strtolower($cliente->kind))=='E')
-                                {{ucwords(strtolower($factura->dni))}}
-                                @else
-                                {{ucwords(strtolower($factura->dni))}}
-                                @endif</div>
+                                <?php if(ucwords(strtolower($cliente->kind))=='V'||ucwords(strtolower($cliente->kind))=='E'): ?>
+                                <?php echo e(ucwords(strtolower($factura->dni))); ?>
+
+                                <?php else: ?>
+                                <?php echo e(ucwords(strtolower($factura->dni))); ?>
+
+                                <?php endif; ?></div>
                         </div>
                     </div>
                     <table border="0" cellspacing="0" cellpadding="0">
@@ -336,89 +344,94 @@
                                 <th>#</th>
                                 <th class="text-left">NOMBRE DEL PLAN</th>
                                 <th class="text-left">COMENTARIO</th>
-                                @if ($cliente->serie == '1')
+                                <?php if($cliente->serie == '1'): ?>
                                 <th class="text-left">IVA</th>
-                                @endif
+                                <?php endif; ?>
                                 <th class="text-right">PRECIO UNITARIO</th>
                                 <th class="text-right">CANTIDAD</th>
                                 <th class="text-right">TOTAL NETO</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($productos as $producto)
+                            <?php $__currentLoopData = $productos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $producto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
                                 <td class="no" style="background-color: #2096c5;font-family: montserrat;">
-                                    {{$producto->codigo_articulo}}</td>
+                                    <?php echo e($producto->codigo_articulo); ?></td>
                                 <td class="text-left">
-                                    <h3>{{ucwords($producto->nombre_articulo)}}</h3>
+                                    <h3><?php echo e(ucwords($producto->nombre_articulo)); ?></h3>
                                 </td>
-                                @if ($producto->comment_articulo != null || $producto->comment_articulo != 'null')
-                                <td class="text-left">{{ucwords($producto->comment_articulo)}}</td>
-                                @endif
-                                @if ($cliente->serie == '1')
-                                <td class="unit">{{$producto->IVA}}%</td>
+                                <?php if($producto->comment_articulo != null || $producto->comment_articulo != 'null'): ?>
+                                <td class="text-left"><?php echo e(ucwords($producto->comment_articulo)); ?></td>
+                                <?php endif; ?>
+                                <?php if($cliente->serie == '1'): ?>
+                                <td class="unit"><?php echo e($producto->IVA); ?>%</td>
                                 <td class="qty">
-                                    {{number_format((($producto->precio_articulo / ($producto->IVA+100)) * 100)/$producto->cantidad)}}
-                                    {{$factura->denominacion}}</td>
-                                @endif
-                                @if($cliente->serie != '0')
+                                    <?php echo e(number_format((($producto->precio_articulo / ($producto->IVA+100)) * 100)/$producto->cantidad)); ?>
+
+                                    <?php echo e($factura->denominacion); ?></td>
+                                <?php endif; ?>
+                                <?php if($cliente->serie != '0'): ?>
                                 <td class="qty">
-                                    {{number_format($producto->precio_articulo)}} $
+                                    <?php echo e(number_format($producto->precio_articulo)); ?> $
                                 </td>
-                                @endif
-                                <td class="unit">{{$producto->cantidad}}</td>
-                                @if ($cliente->serie == '1')
+                                <?php endif; ?>
+                                <td class="unit"><?php echo e($producto->cantidad); ?></td>
+                                <?php if($cliente->serie == '1'): ?>
                                 <td class="total" style="background-color: #2096c5;font-family: montserrat;">
-                                    {{number_format(($producto->precio_articulo / ($producto->IVA+100)) * 100)}}
-                                    {{$factura->denominacion}}
+                                    <?php echo e(number_format(($producto->precio_articulo / ($producto->IVA+100)) * 100)); ?>
+
+                                    <?php echo e($factura->denominacion); ?>
+
                                 </td>
-                                @endif
-                                @if($cliente->serie != '1')
+                                <?php endif; ?>
+                                <?php if($cliente->serie != '1'): ?>
                                 <td class="total" style="background-color: #2096c5;font-family: montserrat;">
-                                    {{number_format($producto->precio_articulo)}} $
+                                    <?php echo e(number_format($producto->precio_articulo)); ?> $
                                 </td>
-                                @endif
-                                @endforeach
+                                <?php endif; ?>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2"></td>
                                 <td colspan="3">SUBTOTAL</td>
-                                <td>{{$producto->precio_articulo}} $</td>
+                                <td><?php echo e($producto->precio_articulo); ?> $</td>
                             </tr>
                             <tr>
                                 <td colspan="2"></td>
-                                @if($cliente->serie == '1')
-                                <td colspan="3">IVA {{$iva}}%</td>
-                                <td>{{number_format($impuesto)}} {{$factura->denominacion}}</td>
-                                @endif
+                                <?php if($cliente->serie == '1'): ?>
+                                <td colspan="3">IVA <?php echo e($iva); ?>%</td>
+                                <td><?php echo e(number_format($impuesto)); ?> <?php echo e($factura->denominacion); ?></td>
+                                <?php endif; ?>
                             </tr>
                             <tr>
                                 <td colspan="2"></td>
                                 <td colspan="3" style="color: #2096c5;border-top: 1px solid #2096c5;">TOTAL GENERAL</td>
                                 <td style="color: #2096c5;border-top: 1px solid #2096c5;font-family: montserrat;">
-                                    {{$producto->precio_articulo}} $</td>
+                                    <?php echo e($producto->precio_articulo); ?> $</td>
                             </tr>
                         </tfoot>
                     </table>
                     <div class="thanks">Gracias!</div>
-                    @if($pagado >=$monto)
+                    <?php if($pagado >=$monto): ?>
                     <div class="mensajecambio">
                         A solo efectos de lo previsto en el Art.25 de la Ley de Impuesto al Agregado se expresan los
                         montos de la factura en Bolivares(Bs.S) considerando la Tasa de Cambio Promedio de Bs/Dólares de
-                        {{number_format($factura->tasa_pago)}} Bs.S
+                        <?php echo e(number_format($factura->tasa_pago)); ?> Bs.S
                         <div class="montos">
-                            TOTAL: {{number_format($producto->precio_dl/$producto->cantidad * $factura->tasa_pago)}}
+                            TOTAL: <?php echo e(number_format($producto->precio_dl/$producto->cantidad * $factura->tasa_pago)); ?>
+
                             Bs.S
                             <br>
-                            SUBTOTAL: {{number_format($producto->precio_dl/$producto->cantidad * $factura->tasa_pago)}}
+                            SUBTOTAL: <?php echo e(number_format($producto->precio_dl/$producto->cantidad * $factura->tasa_pago)); ?>
+
                             Bs.S
                         </div>
                     </div>
-                    @endif
-                    @if(count($pagosfac)>0)
-                    @if($cliente->serie == '1')
+                    <?php endif; ?>
+                    <?php if(count($pagosfac)>0): ?>
+                    <?php if($cliente->serie == '1'): ?>
                     <div id="notices" class="notices">
                         <div>Historial de pagos:</div>
                         <div class="notice">
@@ -442,43 +455,45 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($pagosfac as $pagosfac)
+                                        <?php $__currentLoopData = $pagosfac; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pagosfac): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                             <td>
-                                                @if($pagosfac->pag_tip == '1')
+                                                <?php if($pagosfac->pag_tip == '1'): ?>
                                                 Transferencia BOD
-                                                @elseif($pagosfac->pag_tip == '2')
+                                                <?php elseif($pagosfac->pag_tip == '2'): ?>
                                                 Transferencia Banesco
-                                                @elseif($pagosfac->pag_tip == '3')
+                                                <?php elseif($pagosfac->pag_tip == '3'): ?>
                                                 Transferencia Venezuela
-                                                @elseif($pagosfac->pag_tip == '6')
+                                                <?php elseif($pagosfac->pag_tip == '6'): ?>
                                                 Transferencia Bicentenario
-                                                @elseif($pagosfac->pag_tip == '4')
+                                                <?php elseif($pagosfac->pag_tip == '4'): ?>
                                                 Retencion ISLR
-                                                @elseif($pagosfac->pag_tip == '5')
+                                                <?php elseif($pagosfac->pag_tip == '5'): ?>
                                                 Retencion IVA
-                                                @elseif($pagosfac->pag_tip == '7')
+                                                <?php elseif($pagosfac->pag_tip == '7'): ?>
                                                 Exonerado
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
                                             <td>
-                                                {{$pagosfac->pag_comment}}
+                                                <?php echo e($pagosfac->pag_comment); ?>
+
                                             </td>
                                             <td>
-                                                {{number_format($pagosfac->pag_monto).""}} Bs.S.
+                                                <?php echo e(number_format($pagosfac->pag_monto).""); ?> Bs.S.
                                             </td>
                                             <td>
-                                                {{date('d-m-Y', strtotime($pagosfac->created_at))}}
+                                                <?php echo e(date('d-m-Y', strtotime($pagosfac->created_at))); ?>
+
                                             </td>
                                         </tr>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>
                                 </table>
                             </div>
 
 
-                            @else
-                            @if ($resto== 0 )
+                            <?php else: ?>
+                            <?php if($resto== 0 ): ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
@@ -495,7 +510,7 @@
                                         <tr>
 
                                             <td>
-                                                {{number_format($producto->precio_dl).""}} $
+                                                <?php echo e(number_format($producto->precio_dl).""); ?> $
                                             </td>
 
                                         </tr>
@@ -503,11 +518,11 @@
                                     </tbody>
                                 </table>
                             </div>
-                            @endif
-                            @endif
-                            @else
+                            <?php endif; ?>
+                            <?php endif; ?>
+                            <?php else: ?>
                             <div class="notices">No existen pagos cargados</div>
-                            @endif
+                            <?php endif; ?>
                         </div>
                     </div>
                 </main>

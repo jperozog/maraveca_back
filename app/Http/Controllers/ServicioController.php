@@ -374,217 +374,187 @@ class ServicioController extends Controller
 
         historico_cliente::create(['history' => 'Activo por inicio de servicio', 'modulo' => 'Servicios', 'cliente' => $datos["cliente_insta"], 'responsable' => $datos["id_usuario"]]);
         
-        
+        if($datos["tipoCliente"] == 1){
 
-        /*Creacion de Promocion si Es necesario*/
+        }else{
+            /*Creacion de Promocion si Es necesario*/
         $promocionEspera = DB::select("SELECT * FROM promociones_en_espera AS e 
-                                            INNER JOIN promociones AS p ON e.promocion_espera = p.id_promocion
-                                                  WHERE e.cliente_promocion = ? AND e.status_espera = 1 ORDER BY e.id_promo_espera DESC",[$datos["cliente_insta"]]);
+        INNER JOIN promociones AS p ON e.promocion_espera = p.id_promocion
+              WHERE e.cliente_promocion = ? AND e.status_espera = 1 ORDER BY e.id_promo_espera DESC",[$datos["cliente_insta"]]);
 
-        if(count($promocionEspera) > 0){
-            
+            if(count($promocionEspera) > 0){
+
             if($datos["tipo_insta"] == 1){
-                $fechafinal = Carbon::now()->addMonths($promocionEspera["0"]->meses);
+            $fechafinal = Carbon::now()->addMonths($promocionEspera["0"]->meses);
 
-           $planPromocion = DB::select("SELECT * FROM planes WHERE id_plan = ?",[$datos["plan_det"]])["0"];
+            $planPromocion = DB::select("SELECT * FROM planes WHERE id_plan = ?",[$datos["plan_det"]])["0"];
 
-           $planServicio = $planPromocion->dmb_plan;
+            $planServicio = $planPromocion->dmb_plan;
 
-           if($promocionEspera["0"]->mbGratis > 0){
-                if($planServicio <= $promocionEspera["0"]->mbGratis){
-                        $palabra = explode(" ",$planPromocion->name_plan);
-                            
-                        $nombrePlan = $palabra[0]." ".$palabra[1]; 
-                            
-                        $nuevaVelocidad = $planServicio;
+            if($promocionEspera["0"]->mbGratis > 0){
+            if($planServicio <= $promocionEspera["0"]->mbGratis){
+            $palabra = explode(" ",$planPromocion->name_plan);
 
-                        if($palabra[1] != "Dedicado"){
-                            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",["%".$nombrePlan." ".$nuevaVelocidad."%",$planPromocion->tipo_plan])["0"];
-                        }else{
-                            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ? AND dmb_plan = ?",["%".$nombrePlan."%",$planPromocion->tipo_plan,$planServicio])["0"];
-                        }
-                        if ($nuevoPLan->carac_plan == 1) {
-                            $parent = "Asimetricos";
-                        } else if ($nuevoPLan->carac_plan == 2) {
-                            $parent = "none";
-                        }
-                }else{
-                        $palabra = explode(" ",$planPromocion->name_plan);
-                    
-                        $nombrePlan = $palabra[0]." ".$palabra[1]; 
-                        
-                        $nuevaVelocidad = $planServicio - $promocionEspera["0"]->mbGratis;
+            $nombrePlan = $palabra[0]." ".$palabra[1]; 
 
-                        if($palabra[1] != "Dedicado"){
-                        $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",["%".$nombrePlan." ".$nuevaVelocidad."%",$planPromocion->tipo_plan])["0"];
-                        }else{
-                        $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ? AND dmb_plan = ?",["%".$nombrePlan."%",$planPromocion->tipo_plan,$planServicio])["0"];
-                        }
-                        if ($nuevoPLan->carac_plan == 1) {
-                        $parent = "Asimetricos";
-                    } else if ($nuevoPLan->carac_plan == 2) {
-                        $parent = "none";
-                    }
-                }          
-           }else{
-                     $palabra = explode(" ",$planPromocion->name_plan);
-                            
-                        $nombrePlan = $palabra[0]." ".$palabra[1]; 
-                            
-                        $nuevaVelocidad = $planServicio;
+            $nuevaVelocidad = $planServicio;
 
-                        if($palabra[1] != "Dedicado"){
-                            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",["%".$nombrePlan." ".$nuevaVelocidad."%",$planPromocion->tipo_plan])["0"];
-                        }else{
-                            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ? AND dmb_plan = ?",["%".$nombrePlan."%",$planPromocion->tipo_plan,$planServicio])["0"];
-                        }
-                        if ($nuevoPLan->carac_plan == 1) {
-                            $parent = "Asimetricos";
-                        } else if ($nuevoPLan->carac_plan == 2) {
-                            $parent = "none";
-                        }
-           }
+            if($palabra[1] != "Dedicado"){
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",["%".$nombrePlan." ".$nuevaVelocidad."%",$planPromocion->tipo_plan])["0"];
+            }else{
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ? AND dmb_plan = ?",["%".$nombrePlan."%",$planPromocion->tipo_plan,$planServicio])["0"];
+            }
+            if ($nuevoPLan->carac_plan == 1) {
+            $parent = "Asimetricos";
+            } else if ($nuevoPLan->carac_plan == 2) {
+            $parent = "none";
+            }
+            }else{
+            $palabra = explode(" ",$planPromocion->name_plan);
 
-           $agregarPromocion = DB::insert('INSERT INTO fac_promo(id_cliente_p,promocion,id_servicio_p,id_plan_p,fecha,comentario,responsable,status,created_at,updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?)',
+            $nombrePlan = $palabra[0]." ".$palabra[1]; 
+
+            $nuevaVelocidad = $planServicio - $promocionEspera["0"]->mbGratis;
+
+            if($palabra[1] != "Dedicado"){
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",["%".$nombrePlan." ".$nuevaVelocidad."%",$planPromocion->tipo_plan])["0"];
+            }else{
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ? AND dmb_plan = ?",["%".$nombrePlan."%",$planPromocion->tipo_plan,$planServicio])["0"];
+            }
+            if ($nuevoPLan->carac_plan == 1) {
+            $parent = "Asimetricos";
+            } else if ($nuevoPLan->carac_plan == 2) {
+            $parent = "none";
+            }
+            }          
+            }else{
+            $palabra = explode(" ",$planPromocion->name_plan);
+
+            $nombrePlan = $palabra[0]." ".$palabra[1]; 
+
+            $nuevaVelocidad = $planServicio;
+
+            if($palabra[1] != "Dedicado"){
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",["%".$nombrePlan." ".$nuevaVelocidad."%",$planPromocion->tipo_plan])["0"];
+            }else{
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ? AND dmb_plan = ?",["%".$nombrePlan."%",$planPromocion->tipo_plan,$planServicio])["0"];
+            }
+            if ($nuevoPLan->carac_plan == 1) {
+            $parent = "Asimetricos";
+            } else if ($nuevoPLan->carac_plan == 2) {
+            $parent = "none";
+            }
+            }
+
+            $agregarPromocion = DB::insert('INSERT INTO fac_promo(id_cliente_p,promocion,id_servicio_p,id_plan_p,fecha,comentario,responsable,status,created_at,updated_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?)',
             [$datos["cliente_insta"],$promocionEspera["0"]->id_promocion,$id_srv,$nuevoPLan->id_plan,$fechafinal,"promocion ".$promocionEspera["0"]->nombre_promocion,$datos["id_usuario"],1,$date,$date]);
 
             $actualizarPromocionEspera= DB::update("UPDATE promociones_en_espera SET status_espera = 2 WHERE id_promo_espera = ?",[$promocionEspera["0"]->id_promo_espera]);
             if($promocionEspera["0"]->mbGratis > 0){
-                if($planServicio > $promocionEspera["0"]->mbGratis){
-                    /*Creacion de factura al inicio del servicio*/ 
-                    $fechaFacturaInicio = date("d/m/Y");
-                    $fechaFacturaFinal = new Carbon('last day of this month');
-                    $date = date("d/m/Y", strtotime($datos["fechaInsta"]));
+            if($planServicio > $promocionEspera["0"]->mbGratis){
+            /*Creacion de factura al inicio del servicio*/ 
+            $fechaFacturaInicio = date("d/m/Y");
+            $fechaFacturaFinal = new Carbon('last day of this month');
+            $date = date("d/m/Y", strtotime($datos["fechaInsta"]));
 
-                    \Artisan::call('factura_promocion', [
-                        'cliente' =>$datos["cliente_insta"], 'fecha'=>$date,'fecha2'=>$fechaFacturaFinal->format('d/m/Y'), 'pro'=>4, 'nro_servicio'=>$id_srv, 'responsable'=>0
-                        ]);
-             }
+            \Artisan::call('factura_promocion', [
+            'cliente' =>$datos["cliente_insta"], 'fecha'=>$date,'fecha2'=>$fechaFacturaFinal->format('d/m/Y'), 'pro'=>4, 'nro_servicio'=>$id_srv, 'responsable'=>0
+            ]);
             }
-           historico_cliente::create(['history'=>'Creacion de Promocion para Cliente '.$promocionEspera["0"]->nombre_promocion.' Para Culminacion: '.$fechafinal, 'modulo'=>'Facturacion','cliente' => $datos["cliente_insta"], 'responsable'=>$datos["id_usuario"]]);
+            }
+            historico_cliente::create(['history'=>'Creacion de Promocion para Cliente '.$promocionEspera["0"]->nombre_promocion.' Para Culminacion: '.$fechafinal, 'modulo'=>'Facturacion','cliente' => $datos["cliente_insta"], 'responsable'=>$datos["id_usuario"]]);
             }else{
 
+            $fechafinal = Carbon::now()->addMonths($promocionEspera["0"]->meses);
 
+            $planPromocion = DB::select("SELECT * FROM planes WHERE id_plan = ?",[$datos["plan_det"]])["0"];
 
+            $planServicio = $planPromocion->dmb_plan;
 
+            if($promocionEspera["0"]->mbGratis > 0){
+            if($planServicio <= $promocionEspera["0"]->mbGratis){
+            $palabra = explode(" ",$planPromocion->name_plan);
 
+            $nombrePlan = $palabra[0]." ".$palabra[1]; 
 
+            $nuevaVelocidad = $planServicio;
 
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE dmb_plan = ? AND tipo_plan = ?",[$nuevaVelocidad,$planPromocion->tipo_plan])["0"];
 
+            if ($nuevoPLan->carac_plan == 1) {
+            $parent = "Asimetricos";
+            } else if ($nuevoPLan->carac_plan == 2) {
+            $parent = "none";
+            }
+            }else{
+            $palabra = explode(" ",$planPromocion->name_plan);
 
+            $nombrePlan = $palabra[0]." ".$palabra[1]; 
 
+            $nuevaVelocidad = $planServicio - $promocionEspera["0"]->mbGratis;
 
-                $fechafinal = Carbon::now()->addMonths($promocionEspera["0"]->meses);
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE dmb_plan = ? AND tipo_plan = ?",[$nuevaVelocidad,$planPromocion->tipo_plan])["0"];
 
-           $planPromocion = DB::select("SELECT * FROM planes WHERE id_plan = ?",[$datos["plan_det"]])["0"];
+            if ($nuevoPLan->carac_plan == 1) {
+            $parent = "Asimetricos";
+            } else if ($nuevoPLan->carac_plan == 2) {
+            $parent = "none";
+            }
+            }          
+            }else{
+            $palabra = explode(" ",$planPromocion->name_plan);
 
-           $planServicio = $planPromocion->dmb_plan;
+            $nombrePlan = $palabra[0]." ".$palabra[1]; 
 
-           if($promocionEspera["0"]->mbGratis > 0){
-                if($planServicio <= $promocionEspera["0"]->mbGratis){
-                        $palabra = explode(" ",$planPromocion->name_plan);
-                            
-                        $nombrePlan = $palabra[0]." ".$palabra[1]; 
-                            
-                        $nuevaVelocidad = $planServicio;
+            $nuevaVelocidad = $planServicio;
 
-                        $nuevoPLan = DB::select("SELECT * FROM planes WHERE dmb_plan = ? AND tipo_plan = ?",[$nuevaVelocidad,$planPromocion->tipo_plan])["0"];
-                        
-                        if ($nuevoPLan->carac_plan == 1) {
-                            $parent = "Asimetricos";
-                        } else if ($nuevoPLan->carac_plan == 2) {
-                            $parent = "none";
-                        }
-                }else{
-                        $palabra = explode(" ",$planPromocion->name_plan);
-                    
-                        $nombrePlan = $palabra[0]." ".$palabra[1]; 
-                        
-                        $nuevaVelocidad = $planServicio - $promocionEspera["0"]->mbGratis;
+            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",[$nuevaVelocidad,$planPromocion->tipo_plan])["0"];
 
-                        $nuevoPLan = DB::select("SELECT * FROM planes WHERE dmb_plan = ? AND tipo_plan = ?",[$nuevaVelocidad,$planPromocion->tipo_plan])["0"];
-                        
-                        if ($nuevoPLan->carac_plan == 1) {
-                        $parent = "Asimetricos";
-                    } else if ($nuevoPLan->carac_plan == 2) {
-                        $parent = "none";
-                    }
-                }          
-           }else{
-                     $palabra = explode(" ",$planPromocion->name_plan);
-                            
-                        $nombrePlan = $palabra[0]." ".$palabra[1]; 
-                            
-                        $nuevaVelocidad = $planServicio;
+            if ($nuevoPLan->carac_plan == 1) {
+            $parent = "Asimetricos";
+            } else if ($nuevoPLan->carac_plan == 2) {
+            $parent = "none";
+            }
+            }
 
-                            $nuevoPLan = DB::select("SELECT * FROM planes WHERE name_plan LIKE ? AND tipo_plan = ?",[$nuevaVelocidad,$planPromocion->tipo_plan])["0"];
-                        
-                        if ($nuevoPLan->carac_plan == 1) {
-                            $parent = "Asimetricos";
-                        } else if ($nuevoPLan->carac_plan == 2) {
-                            $parent = "none";
-                        }
-           }
-
-           $agregarPromocion = DB::insert('INSERT INTO fac_promo(id_cliente_p,promocion,id_servicio_p,id_plan_p,fecha,comentario,responsable,status,created_at,updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?)',
+            $agregarPromocion = DB::insert('INSERT INTO fac_promo(id_cliente_p,promocion,id_servicio_p,id_plan_p,fecha,comentario,responsable,status,created_at,updated_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?)',
             [$datos["cliente_insta"],$promocionEspera["0"]->id_promocion,$id_srv,$nuevoPLan->id_plan,$fechafinal,"promocion ".$promocionEspera["0"]->nombre_promocion,$datos["id_usuario"],1,$date,$date]);
 
             $actualizarPromocionEspera= DB::update("UPDATE promociones_en_espera SET status_espera = 2 WHERE id_promo_espera = ?",[$promocionEspera["0"]->id_promo_espera]);
             if($promocionEspera["0"]->mbGratis > 0){
-                if($planServicio > $promocionEspera["0"]->mbGratis){
-                    /*Creacion de factura al inicio del servicio*/ 
-                    $fechaFacturaInicio = date("d/m/Y");
-                    $fechaFacturaFinal = new Carbon('last day of this month');
-                    $date = date("d/m/Y", strtotime($datos["fechaInsta"]));
+            if($planServicio > $promocionEspera["0"]->mbGratis){
+            /*Creacion de factura al inicio del servicio*/ 
+            $fechaFacturaInicio = date("d/m/Y");
+            $fechaFacturaFinal = new Carbon('last day of this month');
+            $date = date("d/m/Y", strtotime($datos["fechaInsta"]));
 
-                    \Artisan::call('factura_promocion', [
-                        'cliente' =>$datos["cliente_insta"], 'fecha'=>$date,'fecha2'=>$fechaFacturaFinal->format('d/m/Y'), 'pro'=>4, 'nro_servicio'=>$id_srv, 'responsable'=>0
-                        ]);
-             }
+            \Artisan::call('factura_promocion', [
+            'cliente' =>$datos["cliente_insta"], 'fecha'=>$date,'fecha2'=>$fechaFacturaFinal->format('d/m/Y'), 'pro'=>4, 'nro_servicio'=>$id_srv, 'responsable'=>0
+            ]);
             }
-           historico_cliente::create(['history'=>'Creacion de Promocion para Cliente '.$promocionEspera["0"]->nombre_promocion.' Para Culminacion: '.$fechafinal, 'modulo'=>'Facturacion','cliente' => $datos["cliente_insta"], 'responsable'=>$datos["id_usuario"]]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            }
+            historico_cliente::create(['history'=>'Creacion de Promocion para Cliente '.$promocionEspera["0"]->nombre_promocion.' Para Culminacion: '.$fechafinal, 'modulo'=>'Facturacion','cliente' => $datos["cliente_insta"], 'responsable'=>$datos["id_usuario"]]);
 
             }
 
-           
-           
-        }else{
 
-             /*Creacion de factura al inicio del servicio*/ 
+
+            }else{
+
+            /*Creacion de factura al inicio del servicio*/ 
             $fechaFacturaInicio = date("d/m/Y");
             $fechaFacturaFinal = new Carbon('last day of this month');
             $date = date("d/m/Y", strtotime($datos["fechaInsta"]));
 
             \Artisan::call('factura:generar', [
-                'cliente' => $datos["cliente_insta"], 'fecha'=>$date,'fecha2'=>$fechaFacturaFinal->format('d/m/Y') , 'pro'=>1, 'nro_servicio'=>$id_srv, 'responsable'=>0
+            'cliente' => $datos["cliente_insta"], 'fecha'=>$date,'fecha2'=>$fechaFacturaFinal->format('d/m/Y') , 'pro'=>1, 'nro_servicio'=>$id_srv, 'responsable'=>0
             ]);
-        }  
+            }  
+        }
+
+        
 
         return response()->json($request);
     }

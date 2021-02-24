@@ -494,7 +494,7 @@ class ClientController extends Controller
             $cliente->save();
 
             Mail::send('register.TestRegister', ['cliente'=>$cliente], function ($message) use ($verify) {
-                $message->from('no-responder@maraveca.com', 'Sistema Administrativo(Correo Automatico)');
+                $message->from('no-responder@maraveca.com', 'Mi Ventana(Correo Automatico)');
                 $message->to($verify->email);
                 //$message->to('henryaog@hotmail.com');
                 //$message->bcc('henry.orono@maraveca.com');
@@ -775,7 +775,7 @@ $resto= $monto -$pagado;
 
             /* =================================================================================================================================*/
             Mail::send('rpagos', ['cliente'=>$cliente], function ($message) use ($cliente) {
-                $message->from('no-responder@maraveca.com', 'Sistema Administrativo(Correo Automatico)');
+                $message->from('no-responder@maraveca.com', 'Mi Ventana(Correo Automatico)');
                 $message->to($cliente->email);
                 //$message->to('gerencia@maraveca.com');
                 //$message->bcc('haorono@gmail.com');
@@ -964,7 +964,7 @@ $resto= $monto -$pagado;
 
             /* =================================================================================================================================*/
             Mail::send('rpagos', ['cliente'=>$cliente], function ($message) use ($cliente) {
-                $message->from('no-responder@maraveca.com', 'Sistema Administrativo(Correo Automatico)');
+                $message->from('no-responder@maraveca.com', 'Mi Ventana(Correo Automatico)');
                 $message->to($cliente->email);
                 //$message->to('gerencia@maraveca.com');
                 //$message->bcc('haorono@gmail.com');
@@ -1038,7 +1038,7 @@ $resto= $monto -$pagado;
                 $cliente->save();
 
                 Mail::send('password.RRegister', ['cliente'=>$cliente], function ($message) use ($verify) {
-                    $message->from('no-responder@maraveca.com', 'Sistema Administrativo(Correo Automatico)');
+                    $message->from('no-responder@maraveca.com', 'Mi Ventana(Correo Automatico)');
                     $message->to($verify->email);
                     $message->bcc('haorono@gmail.com');
                     //$message->bcc('henry.orono@maraveca.com');

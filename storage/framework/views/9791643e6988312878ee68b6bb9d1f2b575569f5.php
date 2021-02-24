@@ -321,12 +321,12 @@
                                         <?php $__currentLoopData = $facturacion; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $factura): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                                         <!-- =========================================================================================================================================== -->
-                                        @php
+                                        <?php 
                                         $precio_plan_dl = e(number_format($factura->monto,2)." ");
                                         $pagado_dl = e(number_format($factura->pagado,2)." ");;
                                         $monto_rest= e(number_format($factura->bal,2));
 
-                                        @endphp
+                                         ?>
 
 
                                         <tr id="element1-<?php echo e($factura->id);?>">
@@ -389,12 +389,12 @@
 
 
 
-                                        @php
+                                        <?php 
                                         $precio_plan_dl = e(number_format($factura->monto,2)." ");
                                         $pagado_dl = e(number_format($factura->pagado,2)." ");;
                                         $monto_rest= e(number_format($factura->bal,2));
 
-                                        @endphp
+                                         ?>
 
                                         <tr id="element-<?php echo e($factura->id);?>" style="display: none;">
 
