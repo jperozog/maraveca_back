@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
 use App\historico_cliente;
 use App\historico;
+use \Carbon\Carbon;
 
 class VentasController extends Controller
 {
@@ -256,6 +257,58 @@ class VentasController extends Controller
         }
 
         $actulizarStatusVenta = DB::update("UPDATE ventas SET status_venta = 2 WHERE id_venta = ? ",[$venta->id_venta]);
+
+
+        //agregar a cupos de instalacion
+        $fechaDisponible = DB::select("SELECT *,COUNT(*) as cantidad FROM instalaciones_cupos GROUP BY fecha_cupo HAVING cantidad < 7 ORDER BY fecha_cupo ASC LIMIT 1");
+
+        $lugar_cupo = 0;
+
+        if($res3->id_srvidor == 11 || $res3->id_srvidor == 29 || $res3->id_srvidor == 31){
+            $lugar_cupo = 4;
+        }
+
+        if($res3->id_srvidor == 28){
+            $lugar_cupo = 2;
+        }
+
+        if( $lugar_cupo == 2 || $lugar_cupo == 4){
+            if ($fechaDisponible != [] ) {
+                $aggCupo = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[$idsoporte,$fechaDisponible[0]->fecha_cupo,1,$lugar_cupo,$date,$date]);
+
+                $diaDeLaSemana = Carbon::parse($fechaDisponible[0]->fecha_cupo) ->format('l');
+
+            } else {
+                $fechaDisponible2 = DB::select("SELECT *,COUNT(*) as cantidad FROM instalaciones_cupos GROUP BY fecha_cupo HAVING cantidad >= 7 ORDER BY fecha_cupo DESC LIMIT 1");
+
+                $fecha = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(1)->format('Y-m-d');
+
+                $diaDeLaSemana = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(1)->format('l');
+
+                if($diaDeLaSemana == "Saturday"){
+
+                    $fecha2 = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(1)->format('Y-m-d');
+                    $fecha3 = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(2)->format('Y-m-d');
+                    $fecha4 = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(3)->format('Y-m-d');
+
+                    for ($i=1; $i <= 7 ; $i++) { 
+                        $aggCupo3 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[0,$fecha2,1,0,$date,$date]);
+                    }
+
+                    for ($i=1; $i <= 7 ; $i++) { 
+                        $aggCupo4 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[0,$fecha3,1,0,$date,$date]);
+                    }
+
+                    $aggCupo5 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[$idsoporte,$fecha4,1,$lugar_cupo,$date,$date]);
+
+                }else{
+                    $aggCupo2 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[$idsoporte,$fecha,1,$lugar_cupo,$date,$date]);
+                }
+
+            
+            }
+        }
+        
        
         historico_cliente::create(['history'=>'ip activada para su instalacion', 'modulo'=>'Soporte', 'cliente'=>$id_cliente, 'responsable'=>$id_usuario]);
         historico::create(['responsable'=>$id_usuario, 'modulo'=>'Soporte', 'detalle'=>'ip activa asignada para el cliente: '.$id_cliente]);

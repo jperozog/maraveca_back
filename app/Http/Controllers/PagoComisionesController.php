@@ -21,10 +21,10 @@ class PagoComisionesController extends Controller
 
     public function traerInstalaciones($id,$mes,$anio){
 
-        $facturas = DB::select('SELECT c.kind, c.dni, c.nombre,c.apellido,c.social,c.serie,s.id_srv,s.stat_srv, s.porcentaje_comision_serv, f.* FROM servicios AS s 
-                                    INNER JOIN clientes AS c ON s.cliente_srv = c.id
-                                    INNER JOIN fac_controls AS f ON c.id = f.id_cliente
-                                        WHERE s.user_comision_serv = ? AND MONTH(f.created_at) = ? AND YEAR(f.created_at) = ? AND f.fac_status = 1 AND f.denominacion = "$" GROUP BY s.id_srv  ORDER BY `s`.`id_srv`  DESC',[$id,$mes,$anio]);
+        $facturas = DB::select('SELECT c.kind, c.dni, c.nombre,c.apellido,c.social,c.serie,s.id_srv,s.stat_srv, s.porcentaje_comision_serv, f.* FROM fac_controls AS f
+                                    INNER JOIN clientes AS c ON f.id_cliente = c.id
+                                    INNER JOIN servicios AS s ON f.fac_serv = s.id_srv
+                                        WHERE s.user_comision_serv = ? AND MONTH(f.created_at) = ? AND YEAR(f.created_at) = ? AND f.fac_status = 1 AND f.denominacion = "$" ORDER BY `s`.`id_srv`  DESC',[$id,$mes,$anio]);
                                         
         $totalComisionDl = 0;
         $totalComisionBs = 0;
@@ -97,10 +97,10 @@ class PagoComisionesController extends Controller
             
         }
 
-        $facturas2 = DB::select('SELECT c.kind, c.dni, c.nombre,c.apellido,c.social,c.serie,s.id_srv,s.stat_srv, s.porcentaje_comision_serv, f.* FROM servicios AS s 
-                                    INNER JOIN clientes AS c ON s.cliente_srv = c.id
-                                    INNER JOIN fac_controls AS f ON c.id = f.id_cliente
-                                        WHERE s.user_comision_serv = ? AND MONTH(f.created_at) = ? AND YEAR(f.created_at) = ? AND f.fac_status = 1 AND f.denominacion != "$" GROUP BY f.id_cliente  ORDER BY `s`.`id_srv`  DESC',[$id,$mes,$anio]);
+        $facturas2 = DB::select('SELECT c.kind, c.dni, c.nombre,c.apellido,c.social,c.serie,s.id_srv,s.stat_srv, s.porcentaje_comision_serv, f.* FROM fac_controls AS f
+                                    INNER JOIN clientes AS c ON f.id_cliente = c.id
+                                    INNER JOIN servicios AS s ON f.fac_serv = s.id_srv
+                                        WHERE s.user_comision_serv = ? AND MONTH(f.created_at) = ? AND YEAR(f.created_at) = ? AND f.fac_status = 1 AND f.denominacion != "$" GROUP BY f.id_cliente ORDER BY `s`.`id_srv`  DESC',[$id,$mes,$anio]);
 
         foreach ($facturas2 as $fac2) {
             $monto=DB::select("SELECT round(SUM(fac_products.precio_bs), 2) as monto from  fac_products where ? = fac_products.codigo_factura",[$fac2->id])[0]->monto;

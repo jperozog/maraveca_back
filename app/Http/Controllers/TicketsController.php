@@ -21,7 +21,7 @@ class TicketsController extends Controller
                                     INNER JOIN servicios AS se ON s.servicio_soporte = se.id_srv
                                     INNER JOIN clientes AS c ON se.cliente_srv = c.id
                                     INNER JOIN users AS u ON s.user_soporte = u.id_user
-                                     WHERE tipo_soporte = 2 ORDER BY status_soporte ASC, id_soporte DESC LIMIT 11");
+                                     WHERE tipo_soporte = 2 ORDER BY status_soporte ASC, id_soporte DESC");
 
       
         foreach ($tickets as $ticket) {

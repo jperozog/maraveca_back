@@ -40,37 +40,6 @@ class front_mensajes_morosos extends Command
      */
     public function handle()
     {
-            /*
-        $clientes = DB::select("SELECT * FROM servicios as s
-                                    inner join clientes as cl on s.cliente_srv = cl.id  
-                                    inner join aps as a on s.ap_srv = a.id
-                                    inner join celdas as c on a.celda_ap = c.id_celda
-                                    inner join servidores as ser on c.servidor_celda = ser.id_srvidor
-                                    WHERE ser.id_srvidor = 3");
-        
-
-      
-
-        foreach ($clientes as $cli) {
-            $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
-
-            if (!$fp) {
-                //echo "ERROR: $errno - $errstr<br />\n";
-            }
-            else {
-                fwrite($fp, "Action: Login\r\nUsername: maraveca\r\nSecret: x31y0x\r\n\r\n");
-                fwrite($fp, "Action: smscommand\r\ncommand: gsm send sms 3 ".urlencode($cli->phone1)." \"".urlencode($this->argument('mensaje'))."\" ".rand()." \r\n\r\n");
-                //while (!feof($fp)) 	echo fgets($fp, 1024);
-                //echo fread($fp, 4096);
-                fclose($fp);
-            // echo $moroso->phone1." \ ".$message."\n";
-            historico_mensaje::create(['responsable'=>$this->argument('Responsable'), 'modulo'=>'mensaje a deudores', 'detalle'=>$this->argument('mensaje')]);
-            }   
-        }
-        
-
-        */
-
         
         
         //selecciono todos los clientes

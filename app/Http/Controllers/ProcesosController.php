@@ -33,8 +33,7 @@ class ProcesosController extends Controller
         $iva=configuracion::where('nombre','=','iva')->first();
         $iva1=(+$iva->valor+100)/100;
         $denominacion=configuracion::where('nombre','=','denominacion')->first();
-        $clientes=DB::table('clientes')
-        ->orderBy('id', 'ASC')->get();
+        $clientes=DB::select("SELECT * FROM clientes ORDER BY id ASC");
         $i=0;
         $tmp=configuracion::where('nombre','=','facturacion');
         $numero=$tmp->first()->valor; //2906
@@ -481,8 +480,9 @@ class ProcesosController extends Controller
 
 
     public Function EnviarCorreosFacturacion(){
-                  
-    
+                
+
+        
         $correo = DB::select('SELECT c.id,c.kind,c.dni,c.nombre,c.apellido,c.social,c.email,p.name_plan,p.taza,e.id_envio FROM envio_correo AS e   
                                      INNER JOIN clientes AS c ON e.cliente = c.id
                                      INNER JOIN servicios AS s ON e.servicio = s.id_srv
@@ -510,9 +510,10 @@ class ProcesosController extends Controller
 
             sleep(5); 
         }
+    
         
-        
-         return response()->json($result);
+       
+         return response()->json($correo);
     }
 
     /**

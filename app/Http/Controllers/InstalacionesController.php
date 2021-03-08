@@ -13,6 +13,7 @@ use App\pendiente_servi;
 use App\ticket_history;
 use App\Mikrotik\RouterosAPI;
 use App\lista_ip;
+use \Carbon\Carbon;
 
 class InstalacionesController extends Controller
 {
@@ -42,7 +43,7 @@ class InstalacionesController extends Controller
                             array_push($instalaciones, $i);                          
                             } 
                     }else{
-                        $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                        $instalaciones2= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                                         INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                                         INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                                         INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -53,6 +54,10 @@ class InstalacionesController extends Controller
                                                                         INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                                         INNER JOIN users AS u ON s.user_insta = u.id_user
                                                                                  WHERE ser.id_srvidor = ? AND s.status_insta = 1 ORDER BY s.status_insta ASC, s.id_insta  DESC',[$z->zona]);
+
+                        foreach ($instalaciones2 as $i) {
+                            array_push($instalaciones, $i);                          
+                            } 
                     }
 
                 }  
@@ -364,6 +369,71 @@ class InstalacionesController extends Controller
        return response()->json($mudanzas);
     }
 
+    public function traerCuposActivos(Request $request)
+    {   
+
+        $date = date("Y-m-d"); 
+
+        $dias = DB::select("SELECT * FROM instalaciones_cupos WHERE fecha_cupo >= ?  GROUP BY fecha_cupo ASC LIMIT 7",[$date]);
+
+
+        foreach ($dias as $dia) {
+
+            $diaDeLaSemana = Carbon::parse($dia->fecha_cupo)->format('l');
+
+            if($diaDeLaSemana == "Monday"){
+                $diaDeLaSemana = "Lunes";
+            }
+            if($diaDeLaSemana == "Tuesday"){
+                $diaDeLaSemana = "Martes";
+            }
+            if($diaDeLaSemana == "Wednesday"){
+                $diaDeLaSemana = "Miercoles";
+            }
+            if($diaDeLaSemana == "Thursday"){
+                $diaDeLaSemana = "Jueves";
+            }
+            if($diaDeLaSemana == "Friday"){
+                $diaDeLaSemana = "Viernes";
+            }
+            if($diaDeLaSemana == "Saturday"){
+                $diaDeLaSemana = "Sabado";
+            }
+            if($diaDeLaSemana == "Sunday"){
+                $diaDeLaSemana = "Domingo";
+            }
+
+            $cuposPF = DB::select("SELECT i.id_insta,i.tipo_insta,cl.nombre,cl.apellido,cl.social,cl.kind,cl.dni FROM instalaciones_cupos AS c 
+                                    INNER JOIN instalaciones AS i ON c.id_insta = i.id_insta
+                                    INNER JOIN clientes AS cl ON i.cliente_insta = cl.id 
+                                        WHERE c.fecha_cupo = ? AND c.lugar_cupo = 4",[$dia->fecha_cupo]);
+
+            $dia->cuposPF = $cuposPF; 
+            
+            $cuposC = DB::select("SELECT i.id_insta,i.tipo_insta,cl.nombre,cl.apellido,cl.social,cl.kind,cl.dni FROM instalaciones_cupos AS c 
+                                    INNER JOIN instalaciones AS i ON c.id_insta = i.id_insta
+                                    INNER JOIN clientes AS cl ON i.cliente_insta = cl.id 
+                                        WHERE c.fecha_cupo = ? AND c.lugar_cupo = 2",[$dia->fecha_cupo]);
+
+            $dia->cuposC = $cuposC; 
+
+            $dia->diaSemana = $diaDeLaSemana;
+            
+        }
+      
+       return response()->json($dias);
+    }
+
+    public function traerTodosCuposActivos(Request $request)
+    {   
+
+        $cupos = DB::select("SELECT c.*,i.id_insta,i.tipo_insta,cl.nombre,cl.apellido,cl.social,cl.kind,cl.dni FROM instalaciones_cupos AS c 
+                                INNER JOIN instalaciones AS i ON c.id_insta = i.id_insta
+                                INNER JOIN clientes AS cl ON i.cliente_insta = cl.id WHERE c.id_insta != 0 AND estado_cupo = 1 ORDER BY fecha_cupo ASC");
+      
+       return response()->json($cupos);
+    }
+
 
 
     public function ips(){
@@ -551,6 +621,57 @@ class InstalacionesController extends Controller
             activar_pppoe_pendiente($cliente2,$res2->dni,$ip_mikrotic,$user_mikrotic,$password_mikrotic,$perfil_plan,$estatus,$id_soporte);
             
         }
+
+         //agregar a cupos de instalacion
+         $fechaDisponible = DB::select("SELECT *,COUNT(*) as cantidad FROM instalaciones_cupos GROUP BY fecha_cupo HAVING cantidad < 7 ORDER BY fecha_cupo ASC LIMIT 1");
+
+         $lugar_cupo = 0;
+ 
+         if($res3->id_srvidor == 11 || $res3->id_srvidor == 29 || $res3->id_srvidor == 31){
+             $lugar_cupo = 4;
+         }
+ 
+         if($res3->id_srvidor == 28){
+             $lugar_cupo = 2;
+         }
+ 
+         if( $lugar_cupo == 2 || $lugar_cupo == 4){
+             if ($fechaDisponible != [] ) {
+                 $aggCupo = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[$idsoporte,$fechaDisponible[0]->fecha_cupo,1,$lugar_cupo,$date,$date]);
+ 
+                 $diaDeLaSemana = Carbon::parse($fechaDisponible[0]->fecha_cupo) ->format('l');
+ 
+             } else {
+                 $fechaDisponible2 = DB::select("SELECT *,COUNT(*) as cantidad FROM instalaciones_cupos GROUP BY fecha_cupo HAVING cantidad = 7 ORDER BY fecha_cupo DESC LIMIT 1");
+ 
+                 $fecha = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(1)->format('Y-m-d');
+ 
+                 $diaDeLaSemana = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(1)->format('l');
+ 
+                 if($diaDeLaSemana == "Saturday"){
+ 
+                     $fecha2 = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(1)->format('Y-m-d');
+                     $fecha3 = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(2)->format('Y-m-d');
+                     $fecha4 = Carbon::parse($fechaDisponible2[0]->fecha_cupo)->addDays(3)->format('Y-m-d');
+ 
+                     for ($i=1; $i <= 7 ; $i++) { 
+                         $aggCupo3 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[0,$fecha2,1,0,$date,$date]);
+                     }
+ 
+                     for ($i=1; $i <= 7 ; $i++) { 
+                         $aggCupo4 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[0,$fecha3,1,0,$date,$date]);
+                     }
+ 
+                     $aggCupo5 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[$idsoporte,$fecha4,1,$lugar_cupo,$date,$date]);
+ 
+                 }else{
+                     $aggCupo2 = DB::insert("INSERT INTO instalaciones_cupos(id_insta,fecha_cupo,estado_cupo,lugar_cupo,created_at,updated_at) VALUES (?,?,?,?,?,?)",[$idsoporte,$fecha,1,$lugar_cupo,$date,$date]);
+                 }
+ 
+             
+             }
+         }
+         
        
         historico_cliente::create(['history'=>'ip activada para su instalacion', 'modulo'=>'Soporte', 'cliente'=>$id_cliente, 'responsable'=>$id_usuario]);
         historico::create(['responsable'=>$id_usuario, 'modulo'=>'Soporte', 'detalle'=>'ip activa asignada para el cliente: '.$id_cliente]);
@@ -863,11 +984,6 @@ class InstalacionesController extends Controller
         return response()->json($instalacion);
     }
 
-
-
-
-
-
     public function traerClientes($id)
     {   
         //$nombre = $request ->input('data');
@@ -925,8 +1041,6 @@ class InstalacionesController extends Controller
 
         return response()->json($ips);
     }
-
-
 
     public function cerrarInstalacion(Request $request, $id){
         
@@ -1087,11 +1201,15 @@ class InstalacionesController extends Controller
                $historialInventario = DB::insert("INSERT INTO historicos(responsable,modulo,detalle,created_at,updated_at) VALUES (?,?,?,?,?)",[$request->id_user,'Inventario','Cierre de Instalacion Fibra Optica: Se usaron '.$request->cableFibra ." Mts de Cable Fibra Optica y ".$request->fconnector." Fast Connector",$date,$date]);
    
         }
+
+        $chequearCupo = DB::select("SELECT * FROM instalaciones_cupos WHERE id_insta = ?",[$id]);
+
+        if(count($chequearCupo) > 0){
+            $actCupo = DB::update("UPDATE instalaciones_cupos SET estado_cupo = 2 WHERE id_insta = ?",[$id]);
+        }
         
         return response()->json($request);
     }
-
-
 
     public function guardarMigracion(Request $request){
 
@@ -1564,7 +1682,13 @@ class InstalacionesController extends Controller
         return response()->json($request);
     }
 
+   public function cambiarFechaCupo(Request $request){
 
+    $actualizarFecha = DB::update("UPDATE instalaciones_cupos SET fecha_cupo = ? WHERE id_insta = ?",[$request->fecha, $request->id]);
+
+    return response()->json($actualizarFecha);
+
+   }
 
 
    

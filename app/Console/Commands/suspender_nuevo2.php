@@ -312,10 +312,10 @@ class Suspender_nuevo2 extends command
 
                                                     $API->disconnect();
 
-                                                    $servicios1 = servicios::where('ip_srv', $cliente->ip_srv);
+                                                    $servicios1 = servicios::where('id_srv', $cliente->id_srv);
                                                     $servicios1->update(["stat_srv"=>3]);
                                                     historico_cliente::create(['history'=>'Suspension automatica por deber 1 factura o mas', 'modulo'=>'Facturacion', 'cliente'=>$cliente->id, 'responsable'=>'0']);
-                                                    cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $cliente->ip_srv)->where('accion', 's')->delete();
+                                                    cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('id_srv', $cliente->id_srv)->where('accion', 's')->delete();
                                             
                                             
                                             echo $cliente1." || ".$cliente->ip_srv."(Cortado)"."[".$servidor->nombre_srvidor."][F.O]"."\n";  
@@ -360,10 +360,10 @@ class Suspender_nuevo2 extends command
                                         
                                                             }
                                                             $API->disconnect();
-                                                            $servicios1 = servicios::where('ip_srv', $cliente->ip_srv);
+                                                            $servicios1 = servicios::where('id_srv', $cliente->id_srv);
                                                             $servicios1->update(["stat_srv"=>3]);
                                                             historico_cliente::create(['history'=>'Suspension automatica por deber 1 factura o mas', 'modulo'=>'Facturacion', 'cliente'=>$cliente->id, 'responsable'=>'0']);
-                                                            cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $cliente->ip_srv)->where('accion', 's')->delete();         
+                                                            cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('id_srv', $cliente->id_srv)->where('accion', 's')->delete();         
                                                     
                                                      
                                                             echo $cliente1." || ".$cliente->ip_srv."(Cortado)"."[".$servidor->nombre_srvidor."][F.O]"."\n"; 

@@ -567,9 +567,13 @@ Route::post('guardarMigracion', 'InstalacionesController@guardarMigracion');
 Route::get('datosMigracion/{id}', 'InstalacionesController@datosMigracion');
 Route::post('cerrarMigracion/{id}','InstalacionesController@cerrarMigracion');
 Route::post('traerMudanzas','InstalacionesController@traerMudanzas');
+Route::get('traerTodosCuposActivos','InstalacionesController@traerTodosCuposActivos');
+Route::get('traerCuposActivos','InstalacionesController@traerCuposActivos');
+Route::post('cambiarFechaCupo','InstalacionesController@cambiarFechaCupo');
 Route::get('datosMudanza/{id}', 'InstalacionesController@datosMudanza');
 Route::post('guardarMudanza', 'InstalacionesController@guardarMudanza');
 Route::post('cerrarMudanza/{id}','InstalacionesController@cerrarMudanza');
+
 
 
 //SOPORTE////SOPORTE////SOPORTE////SOPORTE////SOPORTE////SOPORTE////SOPORTE////SOPORTE////SOPORTE//

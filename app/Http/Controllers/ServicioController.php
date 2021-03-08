@@ -714,7 +714,7 @@ class ServicioController extends Controller
                 }
                 historico_cliente::create(['history'=>'Servicio Activado', 'modulo'=>'Servicios', 'cliente'=>$datos["cliente_srv"], 'responsable'=>$datos["id_usuario"]]);
                 historico::create(['responsable'=>$datos["id_usuario"], 'modulo'=>'Servicios', 'detalle'=>'Activa al cliente: '.$cliente]);
-                $adicionales=servicios::where('ip_srv', $datos["ip_srv"]);
+                $adicionales=servicios::where('id_srv', $datos["id_srv"]);
                 $adicionales->update(['stat_srv'=>1]);
             }
             //suspender servicio cliente
@@ -746,7 +746,7 @@ class ServicioController extends Controller
                 historico_cliente::create(['history'=>'Servicio Suspendido', 'modulo'=>'Servicios', 'cliente'=>$datos["cliente_srv"], 'responsable'=>$datos["id_usuario"]]);
                 historico::create(['responsable'=>$datos["id_usuario"], 'modulo'=>'Servicios', 'detalle'=>'Suspende al cliente: '.$cliente]);
                 
-                $adicionales=servicios::where('ip_srv', $datos["ip_srv"]);
+                $adicionales=servicios::where('id_srv', $datos["id_srv"]);
                 $adicionales->update(['stat_srv'=>3]);
                 
                 
@@ -822,7 +822,7 @@ class ServicioController extends Controller
             historico_cliente::create(['history'=>'Factura Modificada por Retiro de Servicio, excedente en Cuentas Incobrables', 'modulo'=>'Cuentas Incobrables', 'cliente'=>$datos["cliente_srv"], 'responsable'=>0]);
             historico::create(['responsable'=>$datos["id_usuario"], 'modulo'=>'Servicios', 'detalle'=>'Suspende al cliente: '.$cliente]);
             
-            $adicionales=servicios::where('ip_srv', $datos["ip_srv"]);
+            $adicionales=servicios::where('id_srv', $datos["id_srv"]);
             $adicionales->update(['stat_srv'=>4]);
             
             
@@ -854,8 +854,8 @@ class ServicioController extends Controller
                 exonerar($datos["ip_srv"], $cliente,$datos["ip_srvidor"], $datos["user_srvidor"], $datos["password_srvidor"],$plan->dmb_plan, $plan->umb_plan,$parent,$datos["id_srv"]);
                 historico_cliente::create(['history'=>'Servicio Exonerado', 'modulo'=>'Servicios', 'cliente'=>$datos["cliente_srv"], 'responsable'=>$datos["id_usuario"]]);
                 historico::create(['responsable'=>$datos["id_usuario"], 'modulo'=>'Servicios', 'detalle'=>'Exonera al cliente: '.$cliente]);
-                $adicionales=servicios::where('ip_srv', $datos["ip_srv"]);
-                $adicionales->update(['stat_srv'=>5]);
+                $adicionales=servicios::where('id_srv', $datos["id_srv"]);
+                $adicionales->update(['id_srv'=>5]);
             }
         }
 
