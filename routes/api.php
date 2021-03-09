@@ -551,6 +551,7 @@ Route::post('cerrarReposicion','TicketsController@cerrarReposicion');
 
 //Instalaciones && Migraciones && Mudanzas
 Route::post('traerInstalaciones','InstalacionesController@index');
+Route::get('traerHistories/{id}', 'InstalacionesController@traerHistories');
 Route::get('ips','InstalacionesController@ips');
 Route::get('instalacionesActivas', 'InstalacionesController@InstalacionesActivas');
 Route::post('instalaciones', 'InstalacionesController@store');

@@ -984,6 +984,13 @@ class InstalacionesController extends Controller
         return response()->json($instalacion);
     }
 
+    public function traerHistories($id){
+        $historial = DB::select("SELECT t.*,u.nombre_user,u.apellido_user FROM  instalaciones_histories AS t
+                                    INNER JOIN users AS u ON t.user_ih = u.id_user WHERE instalacion_ih = ?",[$id]);
+
+        return response()->json($historial);
+    }
+
     public function traerClientes($id)
     {   
         //$nombre = $request ->input('data');
