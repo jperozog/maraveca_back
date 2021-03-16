@@ -668,13 +668,22 @@ class ServicioController extends Controller
         $datos = $request->datos;
 
         $servicio =  DB::select("SELECT * FROM servicios AS s
-                                     INNER JOIN clientes AS c ON s.cliente_srv = c.id
-                                     INNER JOIN aps AS a ON s.ap_srv = a.id
-                                     INNER JOIN celdas AS cel ON a.celda_ap = cel.id_celda
-                                     INNER JOIN servidores AS ser ON cel.servidor_celda = ser.id_srvidor
-                                     INNER JOIN planes AS p ON s.plan_srv = p.id_plan 
-                                     INNER JOIN equipos2 AS e ON s.equipo_srv = e.id_equipo 
+                                    INNER JOIN clientes AS c ON s.cliente_srv = c.id
+                                    INNER JOIN planes AS p on s.plan_srv = p.id_plan
                                         WHERE s.id_srv = ?",[$datos["id_srv"]])["0"];
+
+        if($servicio->tipo_srv == 1 ){
+        $masDatos = DB::select("SELECT * FROM aps AS a 
+                                INNER JOIN celdas AS cel ON a.celda_ap = cel.id_celda
+                                INNER JOIN servidores AS ser ON cel.servidor_celda = ser.id_srvidor
+                                    WHERE a.id = ?",[$servicio->ap_srv])["0"];   
+        }else{
+        $masDatos = DB::select("SELECT * FROM caja_distribucion AS c
+                                    INNER JOIN manga_empalme AS m ON c.manga_caja = m.id_manga
+                                    INNER JOIN olts AS o ON m.olt_manga = o.id_olt
+                                    INNER JOIN servidores AS s ON o.servidor_olt = s.id_srvidor
+                                        WHERE c.id_caja = ?",[$servicio->ap_srv])["0"];
+        }                                  
 
         //cambio de estado del servicio
         
@@ -1174,10 +1183,22 @@ class ServicioController extends Controller
          $servicio =  DB::select("SELECT * FROM servicios AS s
                 INNER JOIN clientes AS c ON s.cliente_srv = c.id
                 INNER JOIN planes AS p on s.plan_srv = p.id_plan
-                INNER JOIN aps AS a ON s.ap_srv = a.id
-                INNER JOIN celdas AS cel ON a.celda_ap = cel.id_celda
-                INNER JOIN servidores AS ser ON cel.servidor_celda = ser.id_srvidor
                     WHERE s.id_srv = ?",[$request["servicio"]])["0"];
+
+        if($servicio->tipo_srv == 1 ){
+            $masDatos = DB::select("SELECT * FROM aps AS a 
+                                        INNER JOIN celdas AS cel ON a.celda_ap = cel.id_celda
+                                        INNER JOIN servidores AS ser ON cel.servidor_celda = ser.id_srvidor
+                                            WHERE a.id = ?",[$servicio->ap_srv])["0"];   
+        }else{
+            $masDatos = DB::select("SELECT * FROM caja_distribucion AS c
+                                            INNER JOIN manga_empalme AS m ON c.manga_caja = m.id_manga
+                                            INNER JOIN olts AS o ON m.olt_manga = o.id_olt
+                                            INNER JOIN servidores AS s ON o.servidor_olt = s.id_srvidor
+                                                WHERE c.id_caja = ?",[$servicio->ap_srv])["0"];
+        }            
+
+           
 
             $plan = DB::select("SELECT * FROM planes WHERE id_plan = ?",[$request["plan"]])["0"];
             if ($plan->carac_plan == 1) {
@@ -1197,7 +1218,7 @@ class ServicioController extends Controller
             $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
             $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
             }
-            Cambiar_plan($servicio->ip_srv, $cliente,$servicio->ip_srvidor, $servicio->user_srvidor, $servicio->password_srvidor,$plan->dmb_plan, $plan->umb_plan,$parent,$request["compromiso"],$plan->name_plan);
+            Cambiar_plan($servicio->ip_srv, $cliente,$masDatos->ip_srvidor, $masDatos->user_srvidor, $masDatos->password_srvidor,$plan->dmb_plan, $plan->umb_plan,$parent,$request["compromiso"],$plan->name_plan);
             
 
             $hoy = Carbon::now();

@@ -16,9 +16,10 @@ class NotasCreditoController extends Controller
     }
 
     public function traerNotasDeCredito($id){
-        $notas = DB::select("SELECT c.social,c.phone1,c.direccion,c.email,c.kind,c.dni,f.*,n.*, 
+        $notas = DB::select("SELECT c.social,c.phone1,c.direccion,c.email,c.kind,c.dni,f.*,n.*, f.created_at as fecha_factura, 
                                  (SELECT round(SUM(fp.precio_articulo), 2) from  fac_products AS fp where f.id = fp.codigo_factura) as monto, 
-                                 (SELECT round(SUM(p.pago_monto), 2) from nota_pagos AS p where n.id_nota = p.nota) as pagado FROM notas_credito AS n  
+                                 (SELECT round(SUM(p.pago_monto), 2) from nota_pagos AS p where n.id_nota = p.nota) as pagado
+                                 FROM notas_credito AS n  
                                 INNER JOIN clientes AS c ON n.id_cliente = c.id
                                 INNER JOIN fac_controls AS f ON n.id_factura = f.id
                                     WHERE n.id_cliente = ? ORDER BY n.id_nota DESC",[$id]);

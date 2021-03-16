@@ -374,7 +374,7 @@ class InstalacionesController extends Controller
 
         $date = date("Y-m-d"); 
 
-        $dias = DB::select("SELECT * FROM instalaciones_cupos WHERE fecha_cupo >= ?  GROUP BY fecha_cupo ASC LIMIT 7",[$date]);
+        $dias = DB::select("SELECT * FROM instalaciones_cupos WHERE fecha_cupo >= ? AND estado_cupo = 1  GROUP BY fecha_cupo ASC LIMIT 7",[$date]);
 
 
         foreach ($dias as $dia) {
@@ -406,14 +406,14 @@ class InstalacionesController extends Controller
             $cuposPF = DB::select("SELECT i.id_insta,i.tipo_insta,cl.nombre,cl.apellido,cl.social,cl.kind,cl.dni FROM instalaciones_cupos AS c 
                                     INNER JOIN instalaciones AS i ON c.id_insta = i.id_insta
                                     INNER JOIN clientes AS cl ON i.cliente_insta = cl.id 
-                                        WHERE c.fecha_cupo = ? AND c.lugar_cupo = 4",[$dia->fecha_cupo]);
+                                        WHERE c.fecha_cupo = ? AND c.lugar_cupo = 4 AND estado_cupo = 1",[$dia->fecha_cupo]);
 
             $dia->cuposPF = $cuposPF; 
             
             $cuposC = DB::select("SELECT i.id_insta,i.tipo_insta,cl.nombre,cl.apellido,cl.social,cl.kind,cl.dni FROM instalaciones_cupos AS c 
                                     INNER JOIN instalaciones AS i ON c.id_insta = i.id_insta
                                     INNER JOIN clientes AS cl ON i.cliente_insta = cl.id 
-                                        WHERE c.fecha_cupo = ? AND c.lugar_cupo = 2",[$dia->fecha_cupo]);
+                                        WHERE c.fecha_cupo = ? AND c.lugar_cupo = 2 AND estado_cupo = 1",[$dia->fecha_cupo]);
 
             $dia->cuposC = $cuposC; 
 
@@ -1696,6 +1696,19 @@ class InstalacionesController extends Controller
     return response()->json($actualizarFecha);
 
    }
+
+   public function cuposAnteriores(Request $request)
+    {   
+
+        $date = date("Y-m-d"); 
+
+        $cupos = DB::select("SELECT c.*,i.id_insta,i.tipo_insta,cl.nombre,cl.apellido,cl.social,cl.kind,cl.dni FROM instalaciones_cupos AS c 
+                                INNER JOIN instalaciones AS i ON c.id_insta = i.id_insta
+                                INNER JOIN clientes AS cl ON i.cliente_insta = cl.id WHERE c.id_insta != 0 AND estado_cupo = 1 AND fecha_cupo < ? ORDER BY fecha_cupo ASC",[$date]);
+
+      
+       return response()->json($cupos);
+    }
 
 
    

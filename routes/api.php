@@ -571,6 +571,7 @@ Route::post('traerMudanzas','InstalacionesController@traerMudanzas');
 Route::get('traerTodosCuposActivos','InstalacionesController@traerTodosCuposActivos');
 Route::get('traerCuposActivos','InstalacionesController@traerCuposActivos');
 Route::post('cambiarFechaCupo','InstalacionesController@cambiarFechaCupo');
+Route::get('cuposAnteriores','InstalacionesController@cuposAnteriores');
 Route::get('datosMudanza/{id}', 'InstalacionesController@datosMudanza');
 Route::post('guardarMudanza', 'InstalacionesController@guardarMudanza');
 Route::post('cerrarMudanza/{id}','InstalacionesController@cerrarMudanza');

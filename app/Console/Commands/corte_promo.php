@@ -43,7 +43,6 @@ class corte_promo extends Command
     public function handle()
     { 
 
-
       /*
       $API = new RouterosAPI();
       if ($API->connect("192.168.12.1", "16cevingst", "*BA557272686075A9E84114187738DAE6F9E24979")) {
@@ -68,7 +67,7 @@ class corte_promo extends Command
       }
       $API->disconnect();
       */
-      
+        
         
       
         $promociones = DB::select("SELECT * FROM fac_promo AS f
@@ -247,7 +246,7 @@ class corte_promo extends Command
               
         }
       
-            
+           
     
   }
 }
