@@ -107,7 +107,7 @@ class ConfiguracionController extends Controller
         inner join fac_pagos as fp on fc.id = fp.fac_id
 			where fc.fac_num is not null ORDER BY fc.id  DESC");
 
-        $balancedl =  balance_clientes_in ::
+        $balancedl = balance_clientes_in ::
         select(
             'clientes.kind',
             'clientes.dni',
@@ -129,14 +129,13 @@ class ConfiguracionController extends Controller
             'balance_clientes_ins.bal_from_in',
             'balance_clientes_ins.bal_monto_in',
             'balance_clientes_ins.conversion',
-            'balance_clientes_ins.tasa',
             'balance_clientes_ins.bal_rest_in',
             'balance_clientes_ins.bal_comment_in',
             'balance_clientes_ins.bal_comment_mod_in',
             'balance_clientes_ins.bal_fecha_mod_in',
             'balance_clientes_ins.user_bal_mod_in',
-            'users.nombre_user',
-            'users.apellido_user',
+            'balance_clientes_ins.tasa',
+           'users.nombre_user',
             'balance_clientes_ins.created_at'
         )
             ->join('clientes', 'balance_clientes_ins.bal_cli_in', '=', 'clientes.id')
