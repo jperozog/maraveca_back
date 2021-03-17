@@ -165,9 +165,9 @@ class ClienteController extends Controller
 
     public function editarDatosClientes(Request $request){
         $datos = $request["datos"];
-        $actualizarDatos = DB::update("UPDATE clientes SET dni = ?,email = ?, nombre = ?, apellido = ?, direccion = ?, social = ?, phone1 = ?, day_of_birth = ?
+        $actualizarDatos = DB::update("UPDATE clientes SET kind = ?,dni = ?,email = ?, nombre = ?, apellido = ?, direccion = ?, social = ?, phone1 = ?, day_of_birth = ?, serie = ?
                                             WHERE id = ?",
-                                            [$datos["dni"],$datos["email"],$datos["nombre"],$datos["apellido"],$datos["direccion"],$datos["social"],$datos["phone1"],$datos["day_of_birth"],$datos["id"]]);
+                                            [$datos["kind"],$datos["dni"],$datos["email"],$datos["nombre"],$datos["apellido"],$datos["direccion"],$datos["social"],$datos["phone1"],$datos["day_of_birth"],$datos["serie"],$datos["id"]]);
 
         return response()->json($request);
     }
