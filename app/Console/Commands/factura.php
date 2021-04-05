@@ -117,7 +117,7 @@ class factura extends Command
                         $denominacion = configuracion::where('nombre', '=', 'denominacion_in')->first();
                     }
                 }
-                if($servicio->serie_srv == 1){
+                if($cliente->serie == 1){
                     $tmp=configuracion::where('nombre','=','facturacion');
                     $numero=$tmp->first();
                     $numero=$numero->valor+1;
@@ -221,7 +221,7 @@ class factura extends Command
 
                 if($servicios->count()  >= 1 ){
                     foreach ($servicios as $key) {
-                        if($key->serie_srv == 1 ){
+                        if($cliente->serie == 1 ){
                             if($pro == 1){
 
                                 DB::table('fac_products')->insert(

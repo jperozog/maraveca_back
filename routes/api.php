@@ -35,6 +35,7 @@ Route::post('tnotify', 'NotifyController@snotify');
 Route::get('mensajes_morosos', 'NotifyController@mensajes_morosos');
 Route::post('env_sms_morosos', 'NotifyController@env_msj_morosos');
 Route::get('traerLista', 'NotifyController@traerHistoricoMensaje');
+Route::get('traerListaFallas', 'NotifyController@traerHistoricoMensajeFallas');
 
 
 // rutas de los balances

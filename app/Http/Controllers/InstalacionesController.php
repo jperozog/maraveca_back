@@ -37,7 +37,7 @@ class InstalacionesController extends Controller
                                                         INNER JOIN servidores as ser ON cel.servidor_celda = ser.id_srvidor
                                                         INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                         INNER JOIN users AS u ON s.user_insta = u.id_user
-                                                            WHERE ser.id_srvidor = ? AND s.status_insta = 1 ORDER BY s.status_insta ASC, s.id_insta  DESC',[$z->zona]);
+                                                            WHERE  s.tipo_insta = 1 AND  ser.id_srvidor = ? AND s.status_insta = 1 ORDER BY s.status_insta ASC, s.id_insta  DESC',[$z->zona]);
 
                         foreach ($instalaciones2 as $i) {
                             array_push($instalaciones, $i);                          
@@ -53,7 +53,7 @@ class InstalacionesController extends Controller
                                                                         INNER JOIN servidores as ser ON o.servidor_olt = ser.id_srvidor
                                                                         INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                                         INNER JOIN users AS u ON s.user_insta = u.id_user
-                                                                                 WHERE ser.id_srvidor = ? AND s.status_insta = 1 ORDER BY s.status_insta ASC, s.id_insta  DESC',[$z->zona]);
+                                                                                 WHERE  s.tipo_insta = 2 AND ser.id_srvidor = ? AND s.status_insta = 1 ORDER BY s.status_insta ASC, s.id_insta  DESC',[$z->zona]);
 
                         foreach ($instalaciones2 as $i) {
                             array_push($instalaciones, $i);                          
@@ -124,13 +124,7 @@ class InstalacionesController extends Controller
                                                         INNER JOIN users AS u ON s.user_insta = u.id_user
                                                             WHERE s.tipo_insta = 1 AND ser.id_srvidor = ? ORDER BY s.status_insta ASC, s.id_insta  DESC',[$request["mk"]]);
 
-                            foreach ($instalaciones as $i) {
-                                $ventas = DB::select("SELECT * FROM ventas WHERE cliente_venta = ? AND status_venta = 1",[$i->cliente_insta]); 
-                                    
-                                if (count($ventas) > 0) {
-                                    $i->fechaVenta = $ventas[0]->created_at;
-                                }
-                            }
+                            
                     }else{
                         if($request["caja"] == 0){
                             $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
@@ -144,6 +138,9 @@ class InstalacionesController extends Controller
                                                             INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                             INNER JOIN users AS u ON s.user_insta = u.id_user
                                                                 WHERE s.tipo_insta = 2 AND ser.id_srvidor = ? ORDER BY s.status_insta ASC, s.id_insta  DESC',[$request["mk"]]);
+
+                           
+                            
                         }else{
                             $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                             INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
@@ -156,6 +153,8 @@ class InstalacionesController extends Controller
                                                             INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                                             INNER JOIN users AS u ON s.user_insta = u.id_user
                                                                 WHERE s.tipo_insta = 2 AND ser.id_srvidor = ? AND caj.id_caja = ? ORDER BY s.status_insta ASC, s.id_insta  DESC',[$request["mk"],$request["caja"]]);
+
+                                                               
                         }
                        
                     }
@@ -189,6 +188,14 @@ class InstalacionesController extends Controller
             }
            
 
+        }
+
+        foreach ($instalaciones as $i) {
+            $ventas = DB::select("SELECT * FROM ventas WHERE cliente_venta = ? AND status_venta = 2",[$i->cliente_insta]); 
+                
+            if (count($ventas) > 0) {
+                $i->fechaVenta = $ventas[0]->created_at;
+            }
         }
 
       
@@ -844,15 +851,39 @@ class InstalacionesController extends Controller
         $id = $request->id;
         $id_user = $request->id_user;
         
-        $instalacion= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.*,e.*,p.*,u.nombre_user,apellido_user  FROM instalaciones AS s
+        $instalacion= DB::select('SELECT s.*,i.*,c.*,e.*,p.*,u.nombre_user,apellido_user  FROM instalaciones AS s
                                             INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                             INNER JOIN planes as p ON i.plan_det = p.id_plan
                                             INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
-                                            INNER JOIN celdas as cel ON i.celda_det = cel.id_celda
-                                            INNER JOIN servidores as ser ON cel.servidor_celda = ser.id_srvidor
                                             INNER JOIN clientes AS c ON s.cliente_insta = c.id
                                             INNER JOIN users AS u ON s.user_insta = u.id_user
                                             WHERE s.id_insta = ?',[$id])["0"];
+
+
+
+        if ($instalacion->tipo_insta == 2) {
+            $masDatos= DB::select('SELECT *  FROM caja_distribucion as c
+                                                        INNER JOIN manga_empalme as m ON c.manga_caja = m.id_manga
+                                                        INNER JOIN olts as o ON m.olt_manga = o.id_olt
+                                                        INNER JOIN servidores as ser ON o.servidor_olt = ser.id_srvidor
+                                                            WHERE c.id_caja = ?',[$instalacion->celda_det])["0"];
+            
+            $MK = $masDatos->ip_srvidor;
+            $user = $masDatos->user_srvidor;
+            $clave = $masDatos->password_srvidor;
+
+
+        }else{
+            $masDatos= DB::select('SELECT *  FROM celdas as cel 
+                                        INNER JOIN servidores as ser ON cel.servidor_celda = ser.id_srvidor
+                                            WHERE cel.id_celda = ?',[$instalacion->celda_det])["0"];
+
+            $MK = $masDatos->ip_srvidor;
+            $user = $masDatos->user_srvidor;
+            $clave = $masDatos->password_srvidor;                                
+        } 
+
+
         
         //devolucion de equipo a inventario
         if($instalacion->serial_det != "0"){
@@ -866,10 +897,6 @@ class InstalacionesController extends Controller
 
 
         //eliminar de lista activo y queue en MK
-        $celda = DB::select("SELECT * FROM celdas AS c INNER JOIN servidores AS s ON c.servidor_celda = s.id_srvidor  WHERE nombre_celda = ?",[$instalacion->nombre_celda])["0"];
-        $MK = $celda->ip_srvidor;
-        $user = $celda->user_srvidor;
-        $clave = $celda->password_srvidor;
 
         $plan = DB::select("SELECT * FROM planes WHERE id_plan = ?",[$instalacion->plan_det])["0"];
             if ($plan->carac_plan == 1) {

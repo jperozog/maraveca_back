@@ -452,17 +452,19 @@
 
                                     </tbody>
                                 </table>
+                                
+
                                 <div style="width: 100%;text-align: center;margin-bottom: 10px;">
-                                    <?php if(round($balanceoD,2) != 0): ?>
-                                    <span style="color:red">Su deuda total es de:
-                                        <?php echo e(number_format($balanceoD)." "); ?> US$.</span>
-                                    <?php elseif(round($balanceoD,2) == 0 && round($afavord,2) > 0): ?>
-                                    <span style="color:green">Usted tiene un saldo a favor de:
-                                        <?php echo e(number_format($afavord)." "); ?> US$.</span>
-                                    <?php elseif(round($balanceoD,2) == 0 && round($afavord,2) == 0): ?>
-                                    <span style="color:green">Usted se encuentra solvente</span>
-                                    <?php endif; ?>
-                                </div>
+                                <?php if(round($balanceoD,2) != 0): ?>
+                                <span style="color:red">Su deuda total es de:
+                                    <?php echo e(number_format($balanceoD, 2,',', '.')." "); ?> $</span>
+                                <?php elseif(round($balanceoD,2) == 0 && round($afavord,2) > 0): ?>
+                                <span style="color:green">Usted tiene un saldo a favor de:
+                                    <?php echo e(number_format($afavord, 2,',', '.')." "); ?> $</span>
+                                <?php elseif(round($balanceoD,2) == 0 && round($afavord,2) == 0): ?>
+                                <span style="color:green">Usted se encuentra solvente</span>
+                                <?php endif; ?>
+                            </div>
 
                                 <?php if($cliente->serie==0): ?>
                                 <div class="accordion md-accordion" id="accordionEx" role="tablist"

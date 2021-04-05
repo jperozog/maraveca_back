@@ -227,7 +227,7 @@ class ClientController extends Controller
         }
         //solo para palanes en bolivares
         foreach ($facturacionB as $facb) {
-            $balb=$facb->pagado-$facb->monto;
+            $balb=$facb->monto-$facb->pagado;
             $facb->bal=$balb;
             if($balb!=0){
                 $balanceoB+=$balb;
@@ -236,7 +236,7 @@ class ClientController extends Controller
 
 
         }
-        $balanceoB= $balanceoB*-1;
+        $balanceoB= $balanceoB;
         $balanceb=balance_cliente::where('bal_cli', '=', $cliente->id)->get();
 
         foreach ($balanceb as $balb) {
@@ -251,13 +251,13 @@ class ClientController extends Controller
         //inicio de calculo de facturacion para planes en dolares
 
         foreach ($facturacionD as $facd) {
-            $bald=$facd->pagado-$facd->monto;
+            $bald=$facd->monto-$facd->pagado;
             $facd->bal=$bald;
             if($bald!=0){
                 $balanceoD+=$bald;
             }
         }
-        $balanceoD= $balanceoD*-1;
+        $balanceoD= $balanceoD;
         $balance_in=balance_clientes_in::where('bal_cli_in', '=', $cliente->id)->get();
 
         foreach ($balance_in as $bald) {
@@ -1007,14 +1007,12 @@ $resto= $monto -$pagado;
         if(empty($search)){
             $respuesta = "Identificacion no encontrada en la base de datos";
             return view('register.errorpass',['respuesta' => $respuesta]);
-        }elseif($search->abonado == null) {
-            if(isset($search->password)){
-                return view('password.password1',['search'=>$search]);
-            }else{
-                return redirect('login')->withErrors('Usted no esta registrado');
-            }
         }else{
-            return redirect('login')->withErrors('Ya se le ha enviado el correo(revisar la bandeja de spam)');
+            if(isset($search->password)){
+                    return view('password.password1',['search'=>$search]);
+            }else{
+                    return redirect('login')->withErrors('Usted no esta registrado');
+            }
         }
     }
 

@@ -86,10 +86,10 @@ class RegistroPagosController extends Controller
             if($datos["bal_stat_in"] == 2 ){
                 if($datos["bal_tip_in"] == 1 || $datos["bal_tip_in"] == 2 || $datos["bal_tip_in"] == 3 || $datos["bal_tip_in"] == 6){
                     $nuevoMonto = $datos["conversion"] / $datos["tasa"];
-                    $actualizarPago = DB::select("UPDATE balance_clientes_ins SET bal_tip_in = ?,bal_comment_in = ?,bal_monto_in = ?,bal_rest_in = ?,conversion = ?,bal_comment_mod_in = ? WHERE id_bal_in = ?",[$datos["bal_tip_in"],$datos["bal_comment_in"],$nuevoMonto,0,$datos["conversion"],$datos["bal_comment_mod_in"],$datos["id_bal_in"]]);
+                    $actualizarPago = DB::select("UPDATE balance_clientes_ins SET bal_tip_in = ?,bal_comment_in = ?,bal_monto_in = ?,bal_rest_in = ?,conversion = ?,bal_comment_mod_in = ? WHERE id_bal_in = ?",[$datos["bal_tip_in"],$datos["bal_comment_in"],$nuevoMonto,$nuevoMonto,$datos["conversion"],$datos["bal_comment_mod_in"],$datos["id_bal_in"]]);
                 }else{
                     $nuevoMonto = $datos["bal_monto_in"] * $datos["tasa"];
-                    $actualizarPago = DB::select("UPDATE balance_clientes_ins SET bal_tip_in = ?,bal_comment_in = ?,bal_monto_in = ?,bal_rest_in = ?,conversion = ?. bal_comment_mod_in = ? WHERE id_bal_in = ?",[$datos["bal_tip_in"],$datos["bal_comment_in"],$datos["bal_monto_in"],0,$nuevoMonto,$datos["bal_comment_mod_in"],$datos["id_bal_in"]]);
+                    $actualizarPago = DB::select("UPDATE balance_clientes_ins SET bal_tip_in = ?,bal_comment_in = ?,bal_monto_in = ?,bal_rest_in = ?,conversion = ?,bal_comment_mod_in = ? WHERE id_bal_in = ?",[$datos["bal_tip_in"],$datos["bal_comment_in"],$datos["bal_monto_in"],$datos["bal_monto_in"],$nuevoMonto,$datos["bal_comment_mod_in"],$datos["id_bal_in"]]);
                 }
                 
             }

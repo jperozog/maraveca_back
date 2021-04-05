@@ -229,6 +229,7 @@ class BalanceClienteInController extends Controller
             }
 
         }
+        /*
         $result = clientes::where('id', $request->bal_cli_in)->get()->first();
         $balanceo = 0;
         $afavor = 0;
@@ -283,7 +284,7 @@ class BalanceClienteInController extends Controller
         //sendsms("04126681426", $message); //ramon
         //sendsms("04122398291", $message); //henry
         //sendsms("04127503582", $message); //oroxo
-
+        */
         return $factura->id;
     }
 

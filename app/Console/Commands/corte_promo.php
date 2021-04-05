@@ -44,6 +44,30 @@ class corte_promo extends Command
     { 
 
       /*
+      $clientes = DB::select("SELECT * FROM servicios AS s
+                                  INNER JOIN clientes AS c ON s.cliente_srv = c.id
+                                     WHERE tipo_srv = 2 AND (YEAR(start_srv) = 2021 AND MONTH(start_srv) <= 3 AND DAY(start_srv) < 23 OR YEAR(start_srv) = 2020) ORDER BY start_srv DESC");
+
+      
+      foreach ($clientes as $c) {
+
+        $facturas = DB::select('SELECT f.*, 
+                                (SELECT round(SUM(fac_products.precio_articulo), 2) from  fac_products where f.id = fac_products.codigo_factura) as monto,
+                                 (SELECT round(SUM(fac_pagos.pag_monto), 2) from  fac_pagos where f.id = fac_pagos.fac_id) as pagado
+                                        FROM fac_controls AS f WHERE f.fac_serv = ? AND f.fac_status = 1 ORDER BY id DESC LIMIT 1',[$c->id_srv]);
+
+      foreach ($facturas as $fac){                                
+
+        if($fac->monto > $fac->pagado){
+        $actualizar = DB::update("UPDATE servicios SET stat_srv = 3 WHERE id_srv = ?",[$c->id_srv]);
+
+        echo $c->nombre." ".$c->apellido." [".$fac->monto."/".$fac->pagado." ]\n";
+        }
+      }
+    }
+    */
+
+      /*
       $API = new RouterosAPI();
       if ($API->connect("192.168.12.1", "16cevingst", "*BA557272686075A9E84114187738DAE6F9E24979")) {
         $API->write('/ping',false);    // send ping command and more is coming

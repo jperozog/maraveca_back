@@ -1029,21 +1029,33 @@ function revisar_in($id)
 
                         //return $READ;
                     }
+
+                    if($moroso->tipo_srv == 1){
+                        $API->write('/ppp/secret/add',false);
+                        $API->write('=name='.$cliente3."(".$moroso->id_srv.")",false);
+                        $API->write('=password='.$moroso->dni,false);
+                        $API->write('=service='."pppoe",false);
+                        $API->write('=profile='.$moroso->name_plan,false);
+                        $API->write('=remote-address='.$moroso->ip_srv,false);
+                        $API->write('=local-address='.$moroso->ip_srvidor,true);
+                    }else{
+                        $API->write('/ppp/secret/add',false);
+                        $API->write('=name='.$cliente3."(".$moroso->id_srv.")",false);
+                        $API->write('=password='.$moroso->dni,false);
+                        $API->write('=service='."pppoe",false);
+                        $API->write('=profile='.$moroso->name_plan,false);
+                    }
+                    
+                  
+                        
                     
 
-                    $API->write('/ppp/secret/add',false);
-                    $API->write('=name='.$cliente3."(".$moroso->id_srv.")",false);
-                    $API->write('=password='.$moroso->dni,false);
-                    $API->write('=service='."pppoe",false);
-                    $API->write('=profile='.$moroso->name_plan,false);
-                    $API->write('=remote-address='.$moroso->ip_srv,false);
-                    $API->write('=local-address='.$moroso->ip_srvidor,true);
-                
                     $READ = $API->read(false);
                     $ARRAY = $API->parseResponse($READ);
+                   
 
 
-                    $servicios1 = servicios::where('ip_srv', $moroso->ip_srv);
+                    $servicios1 = servicios::where('id_srv', $moroso->id_srv);
                     $servicios1->update(["stat_srv" => 1]);
                     historico_cliente::create(['history' => 'Servicio Activado', 'modulo' => 'Facturacion', 'cliente' => $moroso->cliente_srv, 'responsable' => '0']);
                     cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $moroso->ip_srv)->where('accion', 'a')->delete();
