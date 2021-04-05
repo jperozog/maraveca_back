@@ -29,7 +29,7 @@ class InstalacionesController extends Controller
 
                 foreach ($zonas as $z) {
                     if( $request["tipo"] == 1){
-                        $instalaciones2= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                        $instalaciones2= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                         INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                         INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                         INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -43,7 +43,7 @@ class InstalacionesController extends Controller
                             array_push($instalaciones, $i);                          
                             } 
                     }else{
-                        $instalaciones2= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                        $instalaciones2= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                                         INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                                         INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                                         INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -67,7 +67,7 @@ class InstalacionesController extends Controller
                
                 if( $request["mk"] == 0){
                     if( $request["tipo"] == 1){
-                        $instalaciones= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                        $instalaciones= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                         INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                         INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                         INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -87,7 +87,7 @@ class InstalacionesController extends Controller
                                                           
                     }else{
                         if( $request["caja"] == 0){
-                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                             INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                             INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                             INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -99,7 +99,7 @@ class InstalacionesController extends Controller
                                                             INNER JOIN users AS u ON s.user_insta = u.id_user
                                                                 WHERE s.tipo_insta = 2  ORDER BY s.status_insta ASC, s.id_insta  DESC');
                         }else{
-                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                             INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                             INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                             INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -114,7 +114,7 @@ class InstalacionesController extends Controller
                     }
                 }else{
                     if( $request["tipo"] == 1){
-                        $instalaciones= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                        $instalaciones= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                         INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                         INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                         INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -133,7 +133,7 @@ class InstalacionesController extends Controller
                             }
                     }else{
                         if($request["caja"] == 0){
-                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                             INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                             INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                             INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -145,7 +145,7 @@ class InstalacionesController extends Controller
                                                             INNER JOIN users AS u ON s.user_insta = u.id_user
                                                                 WHERE s.tipo_insta = 2 AND ser.id_srvidor = ? ORDER BY s.status_insta ASC, s.id_insta  DESC',[$request["mk"]]);
                         }else{
-                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                            $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                             INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                             INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                             INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -165,7 +165,7 @@ class InstalacionesController extends Controller
 
         }else{
             if( $request["tipo"] == 1){
-                $instalaciones= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                $instalaciones= DB::select('SELECT s.*,i.*,cel.nombre_celda,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                 INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                 INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                 INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
@@ -175,7 +175,7 @@ class InstalacionesController extends Controller
                                                 INNER JOIN users AS u ON s.user_insta = u.id_user
                                                     WHERE s.tipo_insta = 1 AND s.user_insta = ?  ORDER BY s.status_insta ASC, s.id_insta  DESC',[$request["id"]]);
             }else{
-                $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
+                $instalaciones= DB::select('SELECT s.*,i.*,m.nombre_manga,caj.nombre_caja,ser.nombre_srvidor,c.kind,c.dni,c.nombre,c.apellido,c.social,c.direccion,c.phone1,e.*,p.id_plan,p.name_plan,p.tipo_plan,p.taza,p.dmb_plan,p.umb_plan,p.carac_plan,u.nombre_user,apellido_user  FROM instalaciones AS s
                                                 INNER JOIN insta_detalles as i ON s.id_insta = i.id_insta
                                                 INNER JOIN planes as p ON i.plan_det = p.id_plan
                                                 INNER JOIN equipos2 as e ON i.modelo_det = e.id_equipo
