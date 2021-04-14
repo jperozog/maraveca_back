@@ -83,72 +83,9 @@ class Suspender_nuevo2 extends command
 
                                         if($fac->monto > $fac->pagado){
 
-                                            $pendiente = DB::select('SELECT * FROM pendiente_servis WHERE cliente_pd = ? AND status_pd = 2',[$cliente->id]);
-
-                                                if(count($pendiente) > 0){
-                                                    $API = new RouterosAPI();
-                                                    if ($API->connect($servidor->ip_srvidor, $servidor->user_srvidor, $servidor->password_srvidor)) {
-                                                        $API->write('/ip/firewall/address-list/print',false);
-                                                        $API->write('?list=ACTIVOS',false);
-                                                        $API->write('?disabled=false',false);
-                                                        $API->write('?address='.$cliente->ip_srv,true);
-                                                        $READ = $API->read(false);
-                                                        $ARRAY = $API->parseResponse($READ);
-                                                        if(count($ARRAY)>0){
-                                                            $API->write('/ip/firewall/address-list/remove', false);
-                                                            $API->write('=.id=' . $ARRAY[0]['.id']);
-                                                            $READ = $API->read(false);
-                                                        }
-                                                        $API->write("/queue/simple/getall",false);                // verificara si existe en la lista queue
-                                                        $API->write('?name='.$cliente1."(".$cliente->id_srv.")",true);
-                                                        $READ = $API->read(false);
-                                                        $ARRAY = $API->parseResponse($READ);
-                                                        if(count($ARRAY)>0) {
-                                                            $API->write("/queue/simple/remove", false);            // en caso de existir lo eliminara
-                                                            //  $API->write('=.name='.$cliente."(".$id_srv.")");
-                                                            $API->write('=.id=' . $ARRAY[0]['.id']);
-                                                            $READ = $API->read(false);
-                                                            $ARRAY = $API->parseResponse($READ);
-                                                        }
-
-
-                                                        $API->write('/ppp/secret/print',false);
-                                                        $API->write('?remote-address='.$cliente->ip_srv,true);
-                                                        $READ = $API->read(false);
-                                                        $ARRAY = $API->parseResponse($READ);
-                                                        if(count($ARRAY)>0) {
-                                                            $API->write('/ppp/secret/remove', false); // en caso de existir lo eliminara
-                                                            $API->write('=.id=' . $ARRAY[0]['.id']);
-                                                            $READ = $API->read(false);
-                                                            //return $READ;
-                                                        }        //cola_de_ejecucion::where('soporte_pd', $id_soporte)->where('accion', 'r_p_i')->delete();
-                                                            $API->write('/ppp/active/print',false);
-                                                            $API->write('?address='.$cliente->ip_srv,true);
-                                                            $READ = $API->read(false);
-                                                            $ARRAY = $API->parseResponse($READ);
-                                                            
-                                                            if(count($ARRAY)>0) {
-                                                                $API->write('/ppp/active/remove', false); // en caso de existir lo eliminara
-                                                                $API->write('=.id=' . $ARRAY[0]['.id']);
-                                                                $READ = $API->read(false);
-                                                                //return $READ;
-                                                        }  
-
-
-
-
-                                                        $servicios1 = servicios::where('ip_srv', $cliente->ip_srv);
-                                                        $servicios1->update(["stat_srv"=>3]);
-                                                        historico_cliente::create(['history'=>'Suspension automatica por deber 1 factura o mas', 'modulo'=>'Facturacion', 'cliente'=>$cliente->id, 'responsable'=>'0']);
-                                                       // cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $cliente->ip_srv)->where('accion', 's')->delete();
-                                                    }
-                                                    $API->disconnect();
-                                                    
-                                                    echo $cliente1." || ".$cliente->ip_srv."(Cortado)"."[".$servidor->nombre_srvidor."]"."\n";  
-                                                }else{
                                                     $comprosimo = DB::select('SELECT * FROM corte_progs WHERE id_servicio = ? AND status = 1',[$cliente->id_srv]);
 
-                                                        if(count($comprosimo) > 0){
+                                                        if(count($comprosimo) >= 1){
                                                            // echo "(Compromiso de Pago)"."[".$servidor->nombre_srvidor."]"."\n";   
                                                         }else{
 
@@ -218,7 +155,7 @@ class Suspender_nuevo2 extends command
                                                             }
                                                             
                                                         }
-                                                }
+                                                
                                         }else{
                                             //echo " (Solvente)"."[".$servidor->nombre_srvidor."]"."\n";   
                                         }    
@@ -276,53 +213,10 @@ class Suspender_nuevo2 extends command
 
                                 if($fac->monto > $fac->pagado){
 
-                                    $pendiente = DB::select('SELECT * FROM pendiente_servis WHERE cliente_pd = ? AND status_pd = 2',[$cliente->id]);
-
-                                        if(count($pendiente) > 0){
-                                            $API = new RouterosAPI();
-
-                                            if ($API->connect($servidor->ip_srvidor, $servidor->user_srvidor, $servidor->password_srvidor)) {                                  //se conecta y verifica si el cliente exista en la lista
-                                                $API->write('/ppp/secret/print',false);
-                                                        $API->write('?name='.$cliente2."(".$cliente->id_srv.")",true);
-                                                        $READ = $API->read(false);
-                                                        $ARRAY = $API->parseResponse($READ);
-                                                        if(count($ARRAY)>0) {
-                                                            $API->write('/ppp/secret/remove', false); // en caso de existir lo eliminara
-                                                            $API->write('=.id=' . $ARRAY[0]['.id']);
-                                                            $READ = $API->read(false);
-                                                            //return $READ;
-                                                        }        //cola_de_ejecucion::where('soporte_pd', $id_soporte)->where('accion', 'r_p_i')->delete();
-                                                            $API->write('/ppp/active/print',false);
-                                                            $API->write('?name='.$cliente2."(".$cliente->id_srv.")",true);
-                                                            $READ = $API->read(false);
-                                                            $ARRAY = $API->parseResponse($READ);
-                                                           
-                                                            
-                                                            if(count($ARRAY)>0) {
-                                                                $API->write('/ppp/active/remove', false); // en caso de existir lo eliminara
-                                                                $API->write('=.id=' . $ARRAY[0]['.id']);
-                                                                $READ = $API->read(false);
-                                                                //return $READ;
-                                                            } 
-
-                                                
-
-
-                                                    }
-
-                                                    $API->disconnect();
-
-                                                    $servicios1 = servicios::where('id_srv', $cliente->id_srv);
-                                                    $servicios1->update(["stat_srv"=>3]);
-                                                    historico_cliente::create(['history'=>'Suspension automatica por deber 1 factura o mas', 'modulo'=>'Facturacion', 'cliente'=>$cliente->id, 'responsable'=>'0']);
-                                             //       cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('id_srv', $cliente->id_srv)->where('accion', 's')->delete();
-                                            
-                                            
-                                            echo $cliente1." || ".$cliente->ip_srv."(Cortado)"."[".$servidor->nombre_srvidor."][F.O]"."\n";  
-                                        }else{
+                                   
                                             $comprosimo = DB::select('SELECT * FROM corte_progs WHERE id_servicio = ? AND status = 1',[$cliente->id_srv]);
 
-                                                if(count($comprosimo) > 0){
+                                                if(count($comprosimo) >= 1){
                                                     //echo "(Compromiso de Pago)"."[".$servidor->nombre_srvidor."][F.O]"."\n";   
                                                 }else{
 
@@ -370,7 +264,7 @@ class Suspender_nuevo2 extends command
                                                     }
                                                     
                                                 }
-                                        }
+                                        
                                 }else{
                                    // echo " (Solvente)"."[".$servidor->nombre_srvidor."][F.O]"."\n";   
                                 }    

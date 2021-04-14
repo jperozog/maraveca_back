@@ -947,7 +947,15 @@ class InstalacionesController extends Controller
             $historialInventario2 = DB::insert("INSERT INTO historicos(responsable,modulo,detalle,created_at,updated_at) VALUES (?,?,?,?,?)",[$id_user,'Inventario',"Devolucion de Equipo de Promocion al Inventario por Anulacion de Instalacion, Equipo ".$equipoPromocion["0"]->modelo_articulo." Serial: ".$equipoPromocion["0"]->serial_articulo.", codigo de instalacion: ".$instalacion->id_insta,$date,$date]);
 
         }
+
+        //posible eliminarcion de cupo de instalacion
+
+        $cupoInstalacion = DB::select("SELECT * FROM instalaciones_cupos WHERE id_insta = ? AND estado_cupo = 1",[$instalacion->id_insta]);
        
+        if(count($cupoInstalacion) > 0){
+          $actcupoinstalacion = DB::update("UPDATE instalaciones_cupos SET estado_cupo = 2 WHERE id_cupo = ?",[$cupoInstalacion["0"]->id_cupo]);
+
+        }
 
         return response()->json($anulacion);
     }
@@ -1016,6 +1024,13 @@ class InstalacionesController extends Controller
                                     INNER JOIN users AS u ON t.user_ih = u.id_user WHERE instalacion_ih = ?",[$id]);
 
         return response()->json($historial);
+    }
+
+    public function traerInstaladoresEncargados($id){
+        $instaladores = DB::select("SELECT i.*,u.nombre_user,u.apellido_user FROM  instinsts AS i
+                                    INNER JOIN users AS u ON i.installer = u.id_user WHERE i.ticket = ? GROUP BY i.installer ",[$id]);
+
+        return response()->json($instaladores);
     }
 
     public function traerClientes($id)

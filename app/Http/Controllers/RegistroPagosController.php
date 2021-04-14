@@ -11,9 +11,20 @@ use App\Mikrotik\RouterosAPI;
 use App\historico_cliente;
 use App\historico;
 use App\cola_de_ejecucion;
+use App\balance_clientes_in;
+use App\fac_pago;
 
 class RegistroPagosController extends Controller
 {
+
+    public function traerPagosPendientes(){
+        $pagos = DB::select("SELECT * FROM balance_clientes_ins AS b 
+                                    INNER JOIN clientes AS c ON b.bal_cli_in = c.id
+                                    INNER JOIN users AS u ON b.user_bal_mod_in = u.id_user
+                                        WHERE bal_stat_in = 2 ORDER BY b.id_bal_in DESC");
+
+        return response()->json($pagos);                                
+    }
    
     public function traerMetodos(){
 
@@ -55,8 +66,53 @@ class RegistroPagosController extends Controller
         }
 
 
+        if($metodo == 1 || $metodo == 2 || $metodo == 3 || $metodo ==6 ){
+            $moneda = "Bs.S";
+        }else{
+            $moneda = "$";
+        }
+        
+        $result = DB::update("INSERT INTO registro_pagos (responsable,cliente,monto,metodo_pago,moneda,comentario,fecha_pago,estatus_registro) VALUES (?,?,?,?,?,?,?,?)",
+        [$usuario,
+        $cliente,
+        $monto,
+        $metodo,
+        $moneda,
+        $referencia,
+        $fecha2,
+        1]);
+
         revisarBalance_in($cliente);
         revisar_in($cliente);
+        
+     return response()->json($request);
+    }
+
+    public function pagosMasivos(Request $request)
+    {   
+        
+        $metodo = $request->input("metodo");
+        $referencia = $request->input("referencia");
+        $fecha = Carbon::createFromTimestamp($request->input("fecha"))->toDateTimeString();
+        $monto = $request->input("monto");
+        $conversion = $request->input("conversion");
+        $usuario = $request->input("usuario");
+        $cliente = $request->input("cliente");
+        $fecha2 = date("Y-m-d H:i:s");
+        
+
+        
+        $result = DB::select("SELECT valor FROM configuracions where nombre = 'taza'");
+        $taza = $result[0]->valor;
+
+        if($metodo == 1 || $metodo == 2 || $metodo == 3 || $metodo == 6){
+            $result2 = DB::update("INSERT INTO balance_clientes_ins (bal_cli_in,bal_stat_in,bal_tip_in,bal_monto_in,bal_rest_in,conversion,bal_comment_in,user_bal_mod_in,tasa,uso_bal_in,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                                [$cliente,2,$metodo,$conversion,$conversion,$monto,$referencia,$usuario,$taza,1,$fecha,$fecha]);
+        }else{
+            $result2 = DB::update("INSERT INTO balance_clientes_ins (bal_cli_in,bal_stat_in,bal_tip_in,bal_monto_in,bal_rest_in,conversion,bal_comment_in,user_bal_mod_in,tasa,uso_bal_in,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                                 [$cliente,2,$metodo,$monto,$monto,$monto,$referencia,$usuario,$taza,1,$fecha,$fecha]);
+        }
+
 
         if($metodo == 1 || $metodo == 2 || $metodo == 3 || $metodo ==6 ){
             $moneda = "Bs.S";
@@ -73,9 +129,71 @@ class RegistroPagosController extends Controller
         $referencia,
         $fecha2,
         1]);
+
+        //revisarBalance_in($cliente);
+        //revisar_in($cliente);
         
      return response()->json($request);
     }
+
+    public function cargaPagosMasivos(Request $request){
+        $pagos = DB::select("SELECT * FROM balance_clientes_ins AS b 
+                                    INNER JOIN clientes AS c ON b.bal_cli_in = c.id
+                                    INNER JOIN users AS u ON b.user_bal_mod_in = u.id_user
+                                        WHERE bal_stat_in = 2 ORDER BY b.id_bal_in DESC");
+
+        foreach ($pagos as $p) {
+            balance_clientes_in::where('id_bal_in', $p->id_bal_in)->update(['bal_stat_in' => 1]);
+            $facturacion = DB::select("SELECT fac_controls.*,
+              (SELECT round(SUM(fac_products.precio_articulo), 2) from  fac_products where fac_controls.id = fac_products.codigo_factura) as monto,
+              (SELECT SUM(fac_pagos.pag_monto) from  fac_pagos where fac_controls.id = fac_pagos.fac_id) as pagado from fac_controls
+              where fac_controls.id_cliente = $p->bal_cli_in and fac_controls.fac_status = 1  ORDER BY created_at ASC;");//selecciono todas las facturas del cliente
+        foreach ($facturacion as $factura) { //para cada factura reviso su deuda y asumo desde lo cargado
+            $balance = balance_clientes_in::where('bal_cli_in', '=', $p->bal_cli_in)->where('bal_rest_in', '>', 0)->where('bal_stat_in', 1)->get();
+
+            foreach ($balance as $restante1) {
+
+                    $restante = $restante1->bal_rest_in;
+
+               
+
+
+                echo $factura->denominacion;
+                if ($restante > 0) {
+
+                    $deuda = round($factura->monto - $factura->pagado, 2);//calculo su deuda
+                    if ($factura->monto > $factura->pagado) {//si no esta solvente
+                        if ($deuda >= $restante) {//si la deuda es mayor o igual que el resto
+                            fac_pago::create(['fac_id' => $factura->id, 'pag_tip' => $restante1->bal_tip_in, 'status' => '1', 'pag_monto' => $restante, 'pag_comment' => $restante1->bal_comment_in, 'balance_pago_in' => $restante1->id_bal_in  ]);//coloco todo el monto en un pago
+                            $factura->pagado = +$factura->pagado + $restante;
+                            $restante = 0;
+                            revisar_pagado($factura->id);
+                        } elseif ($deuda < $restante) {//si la deuda es menor que el resto
+                            $restante=round(($restante-$deuda),2);//calculo lo que quedara
+                            fac_pago::create(['fac_id' => $factura->id, 'pag_tip' => $restante1->bal_tip_in, 'status' => '1', 'pag_monto' => $deuda, 'pag_comment' => $restante1->bal_comment_in, 'balance_pago_in' => $restante1->id_bal_in  ]);//registro el pago con el monto de la deuda
+                            $factura->monto = 0;
+                            revisar_pagado($factura->id);
+                        }
+                        /*    if ($restante1->bal_tip_in != 12 || $restante1->bal_tip_in != 13 || $restante1->bal_tip_in != 14 || $restante1->bal_tip_in != 16){
+                                $restante = (+$restante * (float)$restante1->tasa);
+                                echo $restante;
+                            }*/
+
+                        $up = balance_clientes_in::where('id_bal_in', '=', $restante1->id_bal_in);
+                        $up->update(['bal_rest_in'=>$restante, 'uso_bal_in' => 1]);//acualizo lo que quedo
+                    }
+
+
+                }
+            }
+
+        }
+        }
+        
+        return response()->json($request);
+    }
+
+
 
 
     public function editarPago(Request $request){

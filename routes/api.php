@@ -209,6 +209,7 @@ Route::put('cortes_prog/anular/{id}', 'ServiciosController@anular_corte_prog');
 
 Route::get('clientes', 'ClientesController@index');
 Route::get('clientes1/{id}', 'ClientesController@index1');
+Route::post('clientes2/', 'ClientesController@index2');
 Route::get('clientes/{id}', 'ClientesController@show');
 Route::get('clientover/{id}', 'ClientesController@overview');
 Route::post('clientes', 'ClientesController@store');
@@ -495,6 +496,8 @@ Route::get('ultimoCierre','ZonasAdministrativasController@traerUltimoCierre');
 
 
 //Pagos & Cierre Caja
+Route::get('traerPagosPendientes','RegistroPagosController@traerPagosPendientes');
+Route::get('cargaPagosMasivos','RegistroPagosController@cargaPagosMasivos');
 Route::get('traerMetodos','RegistroPagosController@traerMetodos');
 Route::get('traerTaza','RegistroPagosController@traerTaza');
 Route::get('conversion','RegistroPagosController@conversion');
@@ -504,6 +507,7 @@ Route::get('efectivoCierre/{id}','RegistroPagosController@traerEfectivoCierre');
 Route::get('nacionalesCierre/{id}','RegistroPagosController@traerNacionalesCierre');
 Route::get('zelleCierre/{id}','RegistroPagosController@traerZelleCierre');
 Route::post('registrarPago','RegistroPagosController@store');
+Route::post('registrarPagoMasivo','RegistroPagosController@pagosMasivos');
 Route::post('editarPago','RegistroPagosController@editarPago');
 Route::post('confimarCierre','RegistroPagosController@confirmarCierre');
 Route::post('cancelarCierre','RegistroPagosController@cancelarCierre');
@@ -553,6 +557,7 @@ Route::post('cerrarReposicion','TicketsController@cerrarReposicion');
 //Instalaciones && Migraciones && Mudanzas
 Route::post('traerInstalaciones','InstalacionesController@index');
 Route::get('traerHistories/{id}', 'InstalacionesController@traerHistories');
+Route::get('traerInstaladoresEncargados/{id}', 'InstalacionesController@traerInstaladoresEncargados');
 Route::get('ips','InstalacionesController@ips');
 Route::get('instalacionesActivas', 'InstalacionesController@InstalacionesActivas');
 Route::post('instalaciones', 'InstalacionesController@store');

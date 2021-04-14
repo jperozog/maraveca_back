@@ -1228,9 +1228,9 @@ class ServicioController extends Controller
             $finalMes = new Carbon('last day of this month');
             $diasTranscuridos = $inicioMes->diff($hoy)->format('%a');
             $diasRestantes=$hoy->diff($inicioSiguienteMes)->format('%a');
-            $diasCompletos=$finalMes->diff($inicioMes)->format('%a');
+            $diasCompletos=$inicioSiguienteMes->diff($inicioMes)->format('%a');
 
-
+            
             $productoAnterior = DB::select("SELECT * from fac_products WHERE codigo_factura = ? ORDER BY id DESC LIMIT 1",[$request["id_fac"]])["0"]; 
             
             $precioAnterior = $productoAnterior->precio_articulo/$diasCompletos;
@@ -1273,6 +1273,6 @@ class ServicioController extends Controller
             historico_cliente::create(['history' => 'Cambio de plan: ' . $servicio->name_plan . ' ahora tiene ' . $plan->name_plan, 'modulo' => 'Servicios', 'cliente' => $servicio->cliente_srv, 'responsable' => $request["id_usuario"]]);
             historico::create(['responsable' => $request["id_usuario"], 'modulo' => 'Servicios', 'detalle' => 'Cambio de plan: ' . $servicio->name_plan . ' ahora tiene ' . $plan->name_plan . '. Cliente ' . $cliente]);
             
-        return response()->json($agregarProductoNuevo);
+        return response()->json($diasCompletos);
     }
 }

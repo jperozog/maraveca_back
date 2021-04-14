@@ -33,18 +33,15 @@ class ClientesController extends Controller
     $permisoSeniat = DB::select("SELECT * FROM permissions WHERE user = ? AND perm = 'seniat'",[$id]);
 
     if (count($permisoSeniat) > 0) {
-      
       $result= DB::select("SELECT * FROM clientes WHERE serie = 1 ORDER BY created_at DESC");
     } else {
-      $result=DB::table('clientes')
-    ->orderBy('clientes.created_at','DSC')
-    ->get();
+      $result= DB::select("SELECT * FROM clientes ORDER BY created_at DESC");
     }
     
 
     $clientes=array();
     $pendientes=array();
-    
+    /*
     foreach ($result as $cliente) {
       $servicio=DB::table('servicios')
       ->where('cliente_srv','=',$cliente->id)
@@ -54,20 +51,55 @@ class ClientesController extends Controller
       if($ns>0){
         array_push($clientes, $cliente);
       }else{
-        
-        //$instalacionesPendientes = DB::select("SELECT * FROM instalaciones WHERE cliente_insta = ? AND (status_insta = 1 OR status_insta = 2) AND YEAR(created_at) >= 2020",[$cliente->id]);
-
-        //if(count($instalacionesPendientes) > 0) {
           array_push($pendientes, $cliente);
-        //}
-       
-  
       }
     }
-    
-    $index = collect(['clientes'=>$clientes,'pendientes'=>$pendientes]);
+    */
+    $index = collect(['clientes'=>$result,'pendientes'=>$result]);
     return response()->json($index);
   }
+
+  public function index2(Request $request)
+  {
+    $permisoSeniat = DB::select("SELECT * FROM permissions WHERE user = ? AND perm = 'seniat'",[$request->id]);
+
+    if (count($permisoSeniat) > 0) {
+      $result= DB::select("SELECT * FROM clientes WHERE serie = 1 ORDER BY created_at DESC");
+    } else {
+
+      if ($request->tipo == 1) {
+        $result= DB::select("SELECT * FROM clientes AS c INNER JOIN servicios AS s ON c.id = s.cliente_srv GROUP BY c.id ORDER BY c.created_at DESC");
+
+        $index = collect(['clientes'=>$result,'pendientes'=>$result]);
+      }else{
+        $result= DB::select("SELECT * FROM clientes ORDER BY created_at DESC");
+        $clientes=array();
+        $pendientes=array();
+        
+        foreach ($result as $cliente) {
+          $servicio=DB::table('servicios')
+          ->where('cliente_srv','=',$cliente->id)
+          ->get();
+          $ns=$servicio->count();
+          $cliente->servicios=$ns;
+          if($ns>0){
+            array_push($clientes, $cliente);
+          }else{
+              array_push($pendientes, $cliente);
+          }
+        }
+        
+        $index = collect(['clientes'=>$clientes,'pendientes'=>$pendientes]);
+      }
+
+     
+    }
+    
+
+    
+    return response()->json($index);
+  }
+
 
   public function show($id)
   {

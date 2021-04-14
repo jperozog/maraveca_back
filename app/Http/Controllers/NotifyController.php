@@ -40,32 +40,27 @@ class NotifyController extends Controller
                     $cli= ucfirst($cliente["nombre"])." ".ucfirst($cliente["apellido"]);
                 }
                 
-                $servicios= DB::select("SELECT * FROM servicios WHERE cliente_srv = ? AND (stat_srv = 1 OR stat_srv = 5)",[$cliente["id"]]);
+                $servicios= DB::select("SELECT * FROM servicios AS s
+                                             INNER JOIN clientes AS c ON s.cliente_srv = c.id
+                                                 WHERE c.id = ? AND (s.stat_srv = 1 OR s.stat_srv = 5)",[$cliente["id"]]);
 
-                if(count($servicios) > 0){
-                    array_push($listaDatos, $cliente);
-                }
+                    foreach ($servicios as $servicio) {
+                            $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
+                        
+                            if (!$fp) {
+                                //echo "ERROR: $errno - $errstr<br />\n";
+                            }
+                            else {
+                                fwrite($fp, "Action: Login\r\nUsername: maraveca\r\nSecret: x31y0x\r\n\r\n");
+                                fwrite($fp, "Action: smscommand\r\ncommand: gsm send sms 3 ".urlencode($servicio->phone1)." \"".urlencode($request->mensaje)."\" ".rand()." \r\n\r\n");
+                                
+                                fclose($fp);
+                            }
 
-                
+                            historico_mensaje::create(['responsable'=>$request->responsable, 'modulo'=>'Noficacion de Falla/Mejora en la Red', 'detalle'=>$request->mensaje]);
+                            
+                    } 
             }
-
-          foreach ($listaDatos as $dato) {
-                
-                $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
-                    
-                if (!$fp) {
-                    //echo "ERROR: $errno - $errstr<br />\n";
-                }
-                else {
-                    fwrite($fp, "Action: Login\r\nUsername: maraveca\r\nSecret: x31y0x\r\n\r\n");
-                    fwrite($fp, "Action: smscommand\r\ncommand: gsm send sms 3 ".urlencode($dato["phone1"])." \"".urlencode($request->mensaje)."\" ".rand()." \r\n\r\n");
-                    
-                    fclose($fp);
-                }
-
-                historico_mensaje::create(['responsable'=>$request->responsable, 'modulo'=>'Noficacion de Falla/Mejora en la Red', 'detalle'=>$request->mensaje]);
-
-          }  
         }
         
         if ($request->tipo == 2) {

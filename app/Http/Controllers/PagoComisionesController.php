@@ -338,7 +338,13 @@ class PagoComisionesController extends Controller
         $fecha = date("Y-m-d H:i:s");
         $responsable = DB::select('SELECT * FROM users WHERE id_user = ?',[$request->responsable])[0];
         $responsable1 = $responsable->nombre_user." ".$responsable->apellido_user;
-        $result = DB::insert('INSERT INTO pago_comisiones(monto,tipo_comision,usuario,emisor,receptor,referencia,responsable,mes,anio,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)',[$request->comision,$request->tipoComision,$request->id_user,$request->emisor,$request->receptor,$request->referencia,$responsable1,$request->mes,$request->anio,$request->fechaPago,$fecha]);
+        $comision = $request->comision;
+
+        if ($request->tasacambio > 0) {
+            $comision = $request->comision / $request->tasacambio;
+        }
+
+        $result = DB::insert('INSERT INTO pago_comisiones(monto,tasaCambio,tipo_comision,usuario,emisor,receptor,referencia,responsable,mes,anio,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',[$comision,$request->tasacambio,$request->tipoComision,$request->id_user,$request->emisor,$request->receptor,$request->referencia,$responsable1,$request->mes,$request->anio,$request->fechaPago,$fecha]);
 
 
         return response()->json($result);

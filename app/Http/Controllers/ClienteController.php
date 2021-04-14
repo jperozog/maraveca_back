@@ -90,7 +90,7 @@ class ClienteController extends Controller
         $fecha2 = date("Y-m-d H:i:s");  
 
     if($request->facturable == true){
-        $result = DB::insert("INSERT INTO clientes(kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,serie,phone1,phone2,social,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        $result = DB::insert("INSERT INTO clientes(kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,serie,tipo_planes,phone1,phone2,social,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
          $request->kni,
          $request->dni,
@@ -103,6 +103,7 @@ class ClienteController extends Controller
          $request->parroquia,
          $fecha,
          1,
+         1,
          $request->numero,
          $request->numero,
          $request->social,
@@ -110,7 +111,7 @@ class ClienteController extends Controller
          $fecha2,
         ]);
     }else{
-        $result = DB::insert("INSERT INTO clientes(kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,phone1,phone2,social,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        $result = DB::insert("INSERT INTO clientes(kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,tipo_planes,phone1,phone2,social,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
          $request->kni,
          $request->dni,
@@ -122,6 +123,7 @@ class ClienteController extends Controller
          $request->municipio,
          $request->parroquia,
          $fecha,
+         1,
          $request->numero,
          $request->numero,
          $request->social,

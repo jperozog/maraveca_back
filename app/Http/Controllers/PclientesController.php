@@ -42,7 +42,7 @@ class PclientesController extends Controller
   {
     
     $fecha2 = date("Y-m-d H:i:s");
-    $result = DB::insert("INSERT INTO clientes(kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,phone1,phone2,social,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    $result = DB::insert("INSERT INTO clientes(kind,dni,email,nombre,apellido,direccion,estado,municipio,parroquia,day_of_birth,tipo_planes,phone1,phone2,social,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [
      $request->kind,
      $request->dni,
@@ -54,6 +54,7 @@ class PclientesController extends Controller
      $request->municipio,
      $request->parroquia,
      $request->day_of_birth,
+     1,
      $request->phone1,
      $request->phon2,
      $request->social,

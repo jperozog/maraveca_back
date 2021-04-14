@@ -210,10 +210,15 @@ class DescuentosController extends Controller
 
         $fecha = date("Y-m-d H:i:s");
         $datos = DB::select("SELECT * FROM descuentos WHERE id_descuento = ?",[$request->id])["0"];
+
+        $actualizarDecuento = DB::update("UPDATE descuentos SET status = 1 WHERE id_descuento = ?",[$request->id]);
+        $historicoCliente = DB::select("INSERT INTO historico_clientes(history,modulo,cliente,responsable,created_at,updated_at) VALUES (?,?,?,?,?,?)",["Aprobacion de descuento al cliente","Descuentos",$datos->cliente_des,0,$fecha,$fecha]);
+
     
         $registroPago = DB::update("INSERT INTO balance_clientes_ins (bal_cli_in,bal_tip_in,bal_monto_in,bal_rest_in,conversion,bal_comment_in,tasa,uso_bal_in,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
                                     [$datos->cliente_des,20,$datos->monto,$datos->monto,$datos->monto,$datos->comentario,$datos->taza,1,$datos->created_at,$datos->updated_at]);
-            
+
+        
         $regitroPago2 = DB::update("INSERT INTO registro_pagos (responsable,cliente,monto,metodo_pago,moneda,comentario,fecha_pago,estatus_registro) VALUES (?,?,?,?,?,?,?,?)",
                                         [$datos->usuario,
                                         $datos->cliente_des,
@@ -229,8 +234,7 @@ class DescuentosController extends Controller
             
         
          
-        $actualizarDecuento = DB::update("UPDATE descuentos SET status = 1 WHERE id_descuento = ?",[$request->id]);
-        $historicoCliente = DB::select("INSERT INTO historico_clientes(history,modulo,cliente,responsable,created_at,updated_at) VALUES (?,?,?,?,?,?)",["Aprobacion de descuento al cliente","Descuentos",$datos->cliente_des,0,$fecha,$fecha]);
+      
         
         
 
