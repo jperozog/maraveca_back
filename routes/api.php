@@ -794,5 +794,9 @@ Route::post("guardarVenta","VentasController@store");
 Route::post("guardarPromoVenta","VentasController@guardarPromoVenta");
 Route::post("guardarTipoVenta","VentasController@guardarTipoVenta");
 Route::post("guardaVentaInstalacion","VentasController@guardaVentaInstalacion");
+Route::post("guardarPagoInstalacion","VentasController@guardarPagoInstalacion");
+Route::get("traerPagosInst","VentasController@traerPagosInst");
+
+
 //VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS
 //VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS
