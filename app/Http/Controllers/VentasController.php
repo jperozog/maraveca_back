@@ -107,6 +107,20 @@ class VentasController extends Controller
         return response()->json($request);
     }
 
+    public function guardarPagoInstalacion(Request $request){
+        $date = date("Y-m-d H:i:s");
+        $agregarPagoInstalacion = DB::insert("INSERT INTO pagos_instalaciones(id_venta,id_cliente,concepto,monto,total_bs,user,tipo_pago,ref,estatus,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",[$request->venta,$request->cliente,$request->concepto,$request->monto,$request->monto_bs,$request->user,$request->tipo,$request->ref,$request->estatus,$date,$date]);
+        return response()->json($request);
+    }
+
+    public function traerPagosInst(){
+        $pagosInstalaciones = DB::select("SELECT p.*,c.kind,c.dni,c.nombre,c.apellido,c.social,u.nombre_user,u.apellido_user,m.* FROM pagos_instalaciones AS p
+                                        INNER JOIN clientes AS c ON p.id_cliente = c.id 
+                                        INNER JOIN users AS u ON p.user = u.id_user
+                                        INNER JOIN metodo_pagos AS m ON p.tipo_pago = m.id_metodo ORDER BY p.id DESC");
+        return response()->json($pagosInstalaciones);
+    }
+
     public function guardaVentaInstalacion(Request $request)
     {
         
