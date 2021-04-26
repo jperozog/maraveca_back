@@ -65,9 +65,6 @@ class StatController extends Controller
         $month[0] = date('d-m-Y', strtotime('0 month'));
         $month[1] = date('d-m-Y', strtotime('-1 month'));
         $month[2] = date('d-m-Y', strtotime('-2 month'));
-        $month[3] = date('d-m-Y', strtotime('-3 month'));
-        $month[4] = date('d-m-Y', strtotime('-4 month'));
-        $month[5] = date('d-m-Y', strtotime('-5 month'));
         $status=[];
         $fechas=[];
         foreach ($month as $mes) {
@@ -80,7 +77,7 @@ class StatController extends Controller
         (SELECT round(SUM(fac_products.precio_articulo), 2) from  fac_products where fac_controls.id = fac_products.codigo_factura) as monto,
         (SELECT round(SUM(fac_pagos.pag_monto), 2) from  fac_pagos where fac_controls.id = fac_pagos.fac_id) as pagado
         from fac_controls where fac_controls.fac_status = 1 and fac_controls.denominacion = '$' and MONTH(fac_controls.created_at) = $m and YEAR(fac_controls.created_at) = $y  ORDER BY created_at DESC ;");
-
+        /*
             if(count($facturas)>0){
                 $den=$facturas[0]->denominacion;
             }
@@ -93,9 +90,13 @@ class StatController extends Controller
 
 
             array_push($status, ['pagado'=>round($pagado, 2), 'facturado'=>round($facturado, 2), 'fecha'=>date('n-Y', strtotime($mes))]);
+            */
+            array_push($status,$facturas);
             array_push($fechas, ['fecha'=>date('n-Y', strtotime($mes))]);
         }
-        return collect(['datos'=>$status, 'fechas'=>$fechas]);
+        $datos = collect(['datos'=>$status, 'fechas'=>$fechas]);
+
+        return response()->json($datos);
     }
 
     public function show(Request $request){

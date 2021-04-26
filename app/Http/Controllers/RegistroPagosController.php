@@ -60,9 +60,15 @@ class RegistroPagosController extends Controller
         if($metodo == 1 || $metodo == 2 || $metodo == 3 || $metodo == 6){
             $result2 = DB::update("INSERT INTO balance_clientes_ins (bal_cli_in,bal_tip_in,bal_monto_in,bal_rest_in,conversion,bal_comment_in,user_bal_mod_in,tasa,uso_bal_in,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                                 [$cliente,$metodo,$conversion,$conversion,$monto,$referencia,$usuario,$taza,1,$fecha,$fecha]);
+            revisarBalance_in($cliente);
+            revisar_in($cliente);
         }else{
             $result2 = DB::update("INSERT INTO balance_clientes_ins (bal_cli_in,bal_tip_in,bal_monto_in,bal_rest_in,conversion,bal_comment_in,user_bal_mod_in,tasa,uso_bal_in,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                                  [$cliente,$metodo,$monto,$monto,$monto,$referencia,$usuario,$taza,1,$fecha,$fecha]);
+
+            revisarBalance_in($cliente);
+            revisar_in($cliente);
+
         }
 
 
@@ -81,11 +87,11 @@ class RegistroPagosController extends Controller
         $referencia,
         $fecha2,
         1]);
-
-        revisarBalance_in($cliente);
-        revisar_in($cliente);
         
      return response()->json($request);
+
+
+    
     }
 
     public function pagosMasivos(Request $request)

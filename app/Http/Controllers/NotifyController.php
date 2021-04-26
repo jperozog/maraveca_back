@@ -72,7 +72,7 @@ class NotifyController extends Controller
                                             INNER JOIN aps AS a ON s.ap_srv = a.id
                                             INNER JOIN celdas AS c ON a.celda_ap = c.id_celda
                                             INNER JOIN servidores AS se on c.servidor_celda = se.id_srvidor
-                                                WHERE se.id_srvidor = ?",[$servidor["id_srvidor"]]);
+                                                WHERE se.id_srvidor = ? AND s.tipo_srv = 1",[$servidor["id_srvidor"]]);
 
                 foreach ($servicios as $servicio) {
                       $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
@@ -104,7 +104,7 @@ class NotifyController extends Controller
                                             INNER JOIN clientes AS cl ON s.cliente_srv = cl.id
                                             INNER JOIN aps AS a ON s.ap_srv = a.id
                                             INNER JOIN celdas AS c ON a.celda_ap = c.id_celda
-                                                WHERE c.id_celda = ?",[$celda["id_celda"]]);
+                                                WHERE c.id_celda = ? AND s.tipo_srv = 1",[$celda["id_celda"]]);
                 
                 foreach ($servicios as $servicio) {
                       $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
@@ -136,7 +136,7 @@ class NotifyController extends Controller
                 $servicios = DB::select("SELECT * FROM servicios AS s
                                             INNER JOIN clientes AS cl ON s.cliente_srv = cl.id
                                             INNER JOIN aps AS a ON s.ap_srv = a.id
-                                                WHERE a.id = ?",[$ap["id"]]);
+                                                WHERE a.id = ? AND s.tipo_srv = 1",[$ap["id"]]);
                 
                 foreach ($servicios as $servicio) {
                       $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
@@ -166,7 +166,7 @@ class NotifyController extends Controller
                 $servicios = DB::select("SELECT * FROM servicios AS s
                                             INNER JOIN clientes AS cl ON s.cliente_srv = cl.id
                                             INNER JOIN caja_distribucion AS c ON s.ap_srv = c.id_caja
-                                                WHERE c.id_caja = ?",[$caja["id_caja"]]);
+                                                WHERE c.id_caja = ? AND s.tipo_srv = 2",[$caja["id_caja"]]);
                 
                 foreach ($servicios as $servicio) {
                     
@@ -198,7 +198,7 @@ class NotifyController extends Controller
                                             INNER JOIN clientes AS cl ON s.cliente_srv = cl.id
                                             INNER JOIN caja_distribucion AS c ON s.ap_srv = c.id_caja
                                             INNER JOIN manga_empalme AS m ON c.manga_caja = m.id_manga
-                                                WHERE m.id_manga = ?",[$manga["id_manga"]]);
+                                                WHERE m.id_manga = ? AND s.tipo_srv = 2",[$manga["id_manga"]]);
                 
                 foreach ($servicios as $servicio) {
                       $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);
@@ -231,7 +231,7 @@ class NotifyController extends Controller
                                             INNER JOIN caja_distribucion AS c ON s.ap_srv = c.id_caja
                                             INNER JOIN manga_empalme AS m ON c.manga_caja = m.id_manga
                                             INNER JOIN olts AS o ON m.olt_manga = o.id_olt
-                                                WHERE o.id_olt = ?",[$olt["id_olt"]]);
+                                                WHERE o.id_olt = ? AND s.tipo_srv = 2",[$olt["id_olt"]]);
                 
                 foreach ($servicios as $servicio) {
                       $fp = stream_socket_client("tcp://192.168.12.251:5038", $errno, $errstr);

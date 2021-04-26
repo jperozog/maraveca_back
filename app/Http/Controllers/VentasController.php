@@ -18,7 +18,7 @@ class VentasController extends Controller
 
         if($request->user == 1){
             $ventas = DB::select("SELECT  v.*,c.*, v.created_at AS fecha_venta FROM ventas AS v 
-                                    INNER JOIN clientes AS c ON v.cliente_venta = c.id");
+                                    INNER JOIN clientes AS c ON v.cliente_venta = c.id ORDER BY v.id_venta DESC");
 
             foreach ($ventas as $v) {
                 if ($v->promo_venta != 0 ) {
@@ -29,7 +29,7 @@ class VentasController extends Controller
 
         }else{
             $ventas = DB::select("SELECT v.*,c.*, v.created_at AS fecha_venta FROM ventas AS v 
-                                    INNER JOIN clientes AS c ON v.cliente_venta = c.id WHERE responsable_venta = ?",[$request->user]);
+                                    INNER JOIN clientes AS c ON v.cliente_venta = c.id WHERE responsable_venta = ? ORDER BY v.id_venta DESC",[$request->user]);
 
                 foreach ($ventas as $v) {
                     if ($v->promo_venta != 0 ) {

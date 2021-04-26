@@ -42,11 +42,11 @@ class corte_promo extends Command
      */
     public function handle()
     { 
-
       /*
+      
       $clientes = DB::select("SELECT * FROM servicios AS s
                                   INNER JOIN clientes AS c ON s.cliente_srv = c.id
-                                     WHERE tipo_srv = 2 AND (YEAR(start_srv) = 2021 AND MONTH(start_srv) <= 3 AND DAY(start_srv) < 23 OR YEAR(start_srv) = 2020) ORDER BY start_srv DESC");
+                                     WHERE tipo_srv = 1 AND (YEAR(start_srv) = 2021 AND MONTH(start_srv) <= 3 AND DAY(start_srv) < 23 OR YEAR(start_srv) = 2020) ORDER BY start_srv DESC");
 
       
       foreach ($clientes as $c) {
@@ -65,7 +65,78 @@ class corte_promo extends Command
         }
       }
     }
+    
     */
+    /*
+    $clientes = DB::select("SELECT * FROM servicios AS s
+                                INNER JOIN clientes AS c ON s.cliente_srv = c.id
+                                INNER JOIN caja_distribucion AS ca ON s.ap_srv = ca.id_caja
+                                INNER JOIN manga_empalme AS m ON ca.manga_caja = m.id_manga
+                                INNER JOIN olts AS o ON m.olt_manga = o.id_olt
+                                INNER JOIN servidores AS se ON o.servidor_olt = se.id_srvidor
+                                INNER JOIN planes AS p ON s.plan_srv = p.id_plan
+                                  WHERE tipo_srv = 2 AND (se.id_srvidor = 12 OR se.id_srvidor = 25) ");
+
+
+      foreach ($clientes as $servicio) {
+
+        $MK  = $servicio->ip_srvidor;
+        $usermk = $servicio->user_srvidor;
+        $passwordmk = $servicio->password_srvidor;
+        $ip = $servicio->ip_srv;
+
+        if( $servicio->kind == 'V'|| $servicio->kind =='E'){
+          $nombre4 = explode(" ",$servicio->nombre);
+          $apellido4 = explode(" ",$servicio->apellido);
+          $cliente3= ucfirst($nombre4[0])." ".ucfirst($apellido4[0]);
+
+          $cliente1= ucfirst($servicio->nombre)." ".ucfirst($servicio->apellido);
+          $remp_cliente= array('À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Ü','Ý','Þ','ß','à','á','â','ã','ä','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ','ö','ø','ù','ú','û','ý','ý','þ','ÿ');
+          $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
+          $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
+          $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente3);
+      }else {
+          $cliente1= ucwords(strtolower($servicio->social));
+          $remp_cliente= array('À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Ü','Ý','Þ','ß','à','á','â','ã','ä','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ','ö','ø','ù','ú','û','ý','ý','þ','ÿ');
+          $correct_cliente= array('a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','u','y','b','s','a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','d','n','o','o','o','o','o','o','u','u','u','y','y','b','y');
+          $cliente = str_replace($remp_cliente, $correct_cliente, $cliente1);
+          $cliente2 = str_replace($remp_cliente, $correct_cliente, $cliente1);
+      }
+
+              $API = new RouterosAPI();
+          if ($API->connect($MK, $usermk, $passwordmk)) {
+            $API->write('/ip/firewall/address-list/print',false); // aqui veo si el cliente existe en la lista de activos
+            $API->write('?list=ACTIVOS',false);
+            $API->write('?disabled=false',false);
+            $API->write('?address='.$ip,true);
+            $READ = $API->read(false);
+            $ARRAY = $API->parseResponse($READ);
+            if(count($ARRAY)==0){                                                             //en caso de que no exista lo agrega
+                $API->write('/ip/firewall/address-list/add',false);
+                $API->write('=list=ACTIVOS',false);
+                $API->write('=address='.$ip,false);
+                $API->write('=comment='.$cliente,true);
+                $READ = $API->read(true);
+            }
+            
+
+              
+            $API->write('/ppp/secret/add',false);
+            $API->write('=name='.$cliente2."(".$servicio->id_srv.")",false);
+            $API->write('=password='.$servicio->dni,false);
+            $API->write('=service='."pppoe",false);
+            $API->write('=profile='.$servicio->name_plan,true);
+          
+              $READ = $API->read(false);
+              $ARRAY = $API->parseResponse($READ);
+              
+
+
+          cola_de_ejecucion::join('servicios', 'servicios.id_srv', '=', 'cola_de_ejecucions.id_srv')->where('ip_srv', $ip)->where('accion', 'a')->delete();
+        }
+      $API->disconnect();
+      }
+      */
 
       /*
       $API = new RouterosAPI();
@@ -83,17 +154,8 @@ class corte_promo extends Command
               echo "Responde";
             }else{
               echo "No Responde";
-            }
-            
-         }else{
-           echo $ARRAY['!trap'][0]['message'];	
-         }
-      }
-      $API->disconnect();
-      */
-        
-        
-      
+ 12
+ */
         $promociones = DB::select("SELECT * FROM fac_promo AS f
                                        INNER JOIN promociones AS pr ON f.promocion = pr.id_promocion
                                        INNER JOIN planes AS p ON f.id_plan_p = p.id_plan WHERE f.status = 1");
