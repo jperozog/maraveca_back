@@ -796,6 +796,7 @@ Route::post("guardarTipoVenta","VentasController@guardarTipoVenta");
 Route::post("guardaVentaInstalacion","VentasController@guardaVentaInstalacion");
 Route::post("guardarPagoInstalacion","VentasController@guardarPagoInstalacion");
 Route::get("traerPagosInst","VentasController@traerPagosInst");
+Route::post("updatePagoInstalacion","VentasController@updatePagoInstalacion");
 
 
 //VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS//VENTAS
