@@ -113,6 +113,11 @@ class VentasController extends Controller
         return response()->json($request);
     }
 
+    public function updatePagoInstalacion(Request $request){
+        $actulizarPagoInsta = DB::update("UPDATE pagos_instalaciones SET estatus = ? WHERE id = ?",[$request->estatus,$request->id]);
+        return response()->json($request);
+    }
+
     public function traerPagosInst(){
         $pagosInstalaciones = DB::select("SELECT p.*,c.kind,c.dni,c.nombre,c.apellido,c.social,u.nombre_user,u.apellido_user,m.* FROM pagos_instalaciones AS p
                                         INNER JOIN clientes AS c ON p.id_cliente = c.id 
